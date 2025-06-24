@@ -1,0 +1,226 @@
+{% extends 'main/base.html' %}
+{% block content %}
+
+<!-- 🌟 Hero Section -->
+<div class="container py-5">
+  <div class="row align-items-center justify-content-center">
+
+    <!-- Profile Image -->
+    <div class="col-md-5 position-relative text-center mb-4 mb-md-0" data-aos="fade-right">
+      <div class="profile-wrapper mx-auto">
+        <div class="glow-circle"></div>
+        <img src="{{ profile.profile_image.url }}" alt="Profile Picture" class="animated-profile shadow" loading="lazy">
+      </div>
+    </div>
+
+    <!-- Bio -->
+    <div class="col-md-7 text-center text-md-start" data-aos="fade-left">
+      <h1 class="display-4 fw-bold mb-3 slide-in">
+        {{ profile.title }} <span class="text-primary">{{ profile.name }}</span>
+      </h1>
+      <p class="lead mb-4 fade-in">{{ profile.bio }}</p>
+      <div class="d-flex flex-wrap gap-3 justify-content-center justify-content-md-start">
+        <a href="/contact/" class="btn btn-lg btn-primary shadow-sm animate-btn">
+          <i class="fas fa-paper-plane me-2"></i> Let's Talk
+        </a>
+        <a href="#collab" class="btn btn-outline-secondary btn-lg shadow-sm animate-btn">
+          🤝 Open to Collaborate
+        </a>
+      </div>
+      <div class="mt-4 d-flex justify-content-center justify-content-md-start gap-3" data-aos="fade-up" data-aos-delay="100">
+        {% if profile.github %}
+          <a href="{{ profile.github }}" class="btn btn-outline-dark rounded-circle" target="_blank" aria-label="GitHub">
+            <i class="fab fa-github fa-lg"></i>
+          </a>
+        {% endif %}
+        {% if profile.linkedin %}
+          <a href="{{ profile.linkedin }}" class="btn btn-outline-primary rounded-circle" target="_blank" aria-label="LinkedIn">
+            <i class="fab fa-linkedin fa-lg"></i>
+          </a>
+        {% endif %}
+        {% if profile.email %}
+          <a href="mailto:{{ profile.email }}" class="btn btn-outline-danger rounded-circle" aria-label="Email">
+            <i class="fas fa-envelope fa-lg"></i>
+          </a>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 🌟 Achievements & Highlights -->
+<section class="container py-5" data-aos="fade-up" id="achievements">
+  <h2 class="text-center mb-5 fw-bold">
+    🌟 Achievements & Highlights
+  </h2>
+  <div class="row g-4 justify-content-center">
+
+    <!-- Best Outgoing Student -->
+    <div class="col-sm-6 col-lg-4">
+      <div class="card shadow border-0 achievement-card h-100 text-center pointer" data-bs-toggle="modal" data-bs-target="#achievement1">
+        <div class="card-body">
+          <i class="fas fa-award fa-2x text-warning mb-3"></i>
+          <h5 class="card-title">Best Outgoing Student</h5>
+          <p class="card-text">Excellence in academics, tech, and leadership across B.Tech journey.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- IoT Innovation -->
+    <div class="col-sm-6 col-lg-4">
+      <div class="card shadow border-0 achievement-card h-100 text-center pointer" data-bs-toggle="modal" data-bs-target="#achievement2">
+        <div class="card-body">
+          <i class="fas fa-lightbulb fa-2x text-success mb-3"></i>
+          <h5 class="card-title">IoT Innovation</h5>
+          <p class="card-text">Smart wheelchair project using AI voice control + sensor tech.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Startup Founder -->
+    <div class="col-sm-6 col-lg-4">
+      <div class="card shadow border-0 achievement-card h-100 text-center pointer" data-bs-toggle="modal" data-bs-target="#achievement3">
+        <div class="card-body">
+          <i class="fas fa-chart-line fa-2x text-primary mb-3"></i>
+          <h5 class="card-title">Startup Founder</h5>
+          <p class="card-text">Co-founded TechTronix, incubated by NEWGEN IEDC for real-time AI/IoT apps.</p>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+
+<!-- 💡 My Expertise -->
+<section class="container py-5 text-center" data-aos="fade-up" data-aos-delay="100">
+  <h2 class="mb-4 fw-bold display-6">💡 My Expertise</h2>
+
+  <div class="row g-4">
+    <!-- Full-Stack Development -->
+    <div class="col-md-4">
+      <div class="expertise-card pointer" data-bs-toggle="modal" data-bs-target="#expertise1">
+        <div class="icon-wrapper bg-primary-subtle text-primary">
+          <i class="fas fa-laptop-code fa-2x"></i>
+        </div>
+        <h5 class="mt-3 fw-semibold">Full-Stack Development</h5>
+        <p class="text-muted">Laravel, Django, REST APIs, JS, Tailwind</p>
+      </div>
+    </div>
+
+    <!-- ML & AI -->
+    <div class="col-md-4">
+      <div class="expertise-card pointer" data-bs-toggle="modal" data-bs-target="#expertise2">
+        <div class="icon-wrapper bg-success-subtle text-success">
+          <i class="fas fa-robot fa-2x"></i>
+        </div>
+        <h5 class="mt-3 fw-semibold">ML & AI</h5>
+        <p class="text-muted">TensorFlow, NLP, OpenCV, Scikit-learn</p>
+      </div>
+    </div>
+
+    <!-- Data Engineering -->
+    <div class="col-md-4">
+      <div class="expertise-card pointer" data-bs-toggle="modal" data-bs-target="#expertise3">
+        <div class="icon-wrapper bg-warning-subtle text-warning">
+          <i class="fas fa-database fa-2x"></i>
+        </div>
+        <h5 class="mt-3 fw-semibold">Data Engineering</h5>
+        <p class="text-muted">SQL, ETL, Dashboards, Data Cleaning</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- 🤝 Collaborate -->
+<section id="collab" class="py-5 bg-light mt-5 text-center" data-aos="zoom-in">
+  <div class="container">
+    <h2 class="mb-3">🤝 Open to Collaborate</h2>
+    <p class="lead">Let’s create impactful tech solutions together. Open for freelance, startup, or full-time opportunities.</p>
+    <a href="/contact/" class="btn btn-outline-primary btn-lg mt-3">
+      <i class="fas fa-comments me-2"></i> Get in Touch
+    </a>
+  </div>
+</section>
+
+<!-- 🎨 Styles -->
+<style>
+  .expertise-card {
+  background-color: #fff;
+  border-radius: 16px;
+  padding: 30px 20px;
+  transition: all 0.3s ease;
+  box-shadow: 0 0 8px rgba(0,0,0,0.05);
+}
+.expertise-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 10px 20px rgba(0,0,0,0.08);
+  cursor: pointer;
+}
+
+.icon-wrapper {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  width: 64px;
+  height: 64px;
+  border-radius: 12px;
+  font-size: 28px;
+  margin-bottom: 10px;
+  transition: all 0.3s ease-in-out;
+}
+
+  .achievement-card {
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  border-radius: 1rem;
+  cursor: pointer;
+}
+
+.achievement-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 12px 20px rgba(0, 0, 0, 0.12);
+}
+
+  .profile-wrapper {
+    position: relative;
+    width: 100%;
+    max-width: 320px;
+    border-radius: 25px;
+    overflow: hidden;
+    animation: float 6s ease-in-out infinite;
+  }
+  .animated-profile {
+    width: 100%;
+    border-radius: 25px;
+    object-fit: cover;
+    transition: transform 0.5s ease;
+  }
+  .glow-circle {
+    position: absolute;
+    top: -15%;
+    left: -15%;
+    width: 130%;
+    height: 130%;
+    background: radial-gradient(circle, rgba(0, 123, 255, 0.25), transparent);
+    filter: blur(40px);
+    animation: glowPulse 3s infinite ease-in-out;
+    z-index: 1;
+  }
+  .card-hover:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 0.5rem 1rem rgba(0,0,0,0.15);
+    transition: 0.3s;
+  }
+  @keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+  }
+  @keyframes glowPulse {
+    0% { opacity: 0.4; transform: scale(1); }
+    50% { opacity: 1; transform: scale(1.05); }
+    100% { opacity: 0.4; transform: scale(1); }
+  }
+</style>
+
+{% endblock %}

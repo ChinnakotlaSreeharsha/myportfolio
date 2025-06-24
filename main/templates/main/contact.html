@@ -1,0 +1,89 @@
+{% extends "main/base.html" %}
+{% block content %}
+
+<div class="container py-5" data-aos="fade-up">
+  <h2 class="text-center mb-5 display-5 fw-bold">
+    <i class="fas fa-envelope-open-text text-primary me-2"></i> Get in Touch
+  </h2>
+
+  <div class="row justify-content-center align-items-start shadow-lg rounded-4 bg-white p-4 px-md-5">
+
+    <!-- LEFT SIDE: Contact Info -->
+    <div class="col-md-4 mb-4 mb-md-0 border-end pe-md-5" data-aos="fade-right">
+      <h4 class="mb-4 text-primary fw-semibold">Reach Me</h4>
+      <ul class="list-unstyled fs-6">
+        <li class="mb-4 d-flex align-items-start">
+          <i class="fa-solid fa-envelope fa-lg me-3 text-primary"></i>
+          <a href="mailto:{{ profile.email }}" class="text-decoration-none text-dark">{{ profile.email }}</a>
+        </li>
+        <li class="mb-4 d-flex align-items-start">
+          <i class="fa-brands fa-github fa-lg me-3 text-dark"></i>
+          <a href="{{ profile.github }}" target="_blank" class="text-decoration-none text-dark">GitHub</a>
+        </li>
+        <li class="mb-4 d-flex align-items-start">
+          <i class="fa-brands fa-linkedin fa-lg me-3 text-primary"></i>
+          <a href="{{ profile.linkedin }}" target="_blank" class="text-decoration-none text-dark">LinkedIn</a>
+        </li>
+      </ul>
+    </div>
+
+    <!-- RIGHT SIDE: Contact Form -->
+    <div class="col-md-8" data-aos="fade-left">
+      {% if success %}
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+          <strong>Message Sent!</strong> Thank you for contacting me.
+          <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+      {% endif %}
+
+      <form method="POST" novalidate class="row g-4" id="contactForm">
+        {% csrf_token %}
+
+        <div class="col-md-6">
+          <label for="id_name" class="form-label">Your Name</label>
+          <div class="input-group">
+            <span class="input-group-text bg-light"><i class="fa-solid fa-user"></i></span>
+            <input type="text" name="name" class="form-control" id="id_name" placeholder="John Doe" required>
+          </div>
+        </div>
+
+        <div class="col-md-6">
+          <label for="id_email" class="form-label">Your Email</label>
+          <div class="input-group">
+            <span class="input-group-text bg-light"><i class="fa-solid fa-envelope"></i></span>
+            <input type="email" name="email" class="form-control" id="id_email" placeholder="you@example.com" required>
+          </div>
+        </div>
+
+        <div class="col-12">
+          <label for="id_subject" class="form-label">Subject</label>
+          <div class="input-group">
+            <span class="input-group-text bg-light"><i class="fa-solid fa-pen"></i></span>
+            <input type="text" name="subject" class="form-control" id="id_subject" placeholder="Subject of your message" required>
+          </div>
+        </div>
+
+        <div class="col-12">
+          <label for="id_message" class="form-label">Message</label>
+          <textarea name="message" class="form-control" id="id_message" rows="5" placeholder="Write your message here..." required></textarea>
+        </div>
+
+        <div class="col-12 text-end">
+          <button type="submit" class="btn btn-primary px-4 py-2 shadow-sm">
+            <i class="fa-solid fa-paper-plane me-1"></i> Send Message
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<script>
+  document.getElementById("contactForm").addEventListener("submit", function () {
+    const btn = this.querySelector("button[type=submit]");
+    btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Sending...';
+    btn.disabled = true;
+  });
+</script>
+
+{% endblock %}

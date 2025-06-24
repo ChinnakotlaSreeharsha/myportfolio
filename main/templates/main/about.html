@@ -1,0 +1,178 @@
+{% extends 'main/base.html' %}
+{% block content %}
+
+<!-- 🔹 About Hero Section -->
+<section class="container py-5">
+  <div class="row align-items-center justify-content-center">
+
+    <!-- Floating Profile Image with Glow -->
+    <div class="col-md-4 mb-4 mb-md-0 text-center" data-aos="fade-right">
+      <div class="profile-wrapper mx-auto">
+        <div class="glow-circle"></div>
+        <img src="{{ profile.profile_image.url }}"
+             alt="Profile Picture"
+             class="animated-profile shadow"
+             loading="lazy">
+      </div>
+    </div>
+
+    <!-- Bio -->
+    <div class="col-md-8 text-center text-md-start" data-aos="fade-left">
+      <h1 class="display-5 fw-bold mb-3 slide-in">
+        <i class="fas fa-user-circle text-primary me-2"></i> About Me
+      </h1>
+      <p class="lead text-muted fade-in">{{ profile.bio }}</p>
+    </div>
+  </div>
+</section>
+
+<!-- 🔹 Profile Details Section -->
+<section class="container py-4" data-aos="fade-up">
+  <div class="card shadow-sm border-0 p-4 rounded-4">
+    <div class="card-body">
+      <h4 class="mb-4 fw-semibold text-center">
+        <i class="fas fa-graduation-cap text-success me-2"></i> Background & Info
+      </h4>
+
+      <div class="row row-cols-1 row-cols-md-2 g-4">
+        <div class="col">
+          <div class="d-flex align-items-center">
+            <i class="fas fa-id-card text-secondary me-2"></i>
+            <strong>Full Name:</strong> &nbsp; {{ profile.name }}
+          </div>
+        </div>
+
+        <div class="col">
+          <div class="d-flex align-items-center">
+            <i class="fas fa-briefcase text-secondary me-2"></i>
+            <strong>Title:</strong> &nbsp; {{ profile.title }}
+          </div>
+        </div>
+
+        {% if profile.email %}
+        <div class="col">
+          <div class="d-flex align-items-center">
+            <i class="fas fa-envelope text-danger me-2"></i>
+            <strong>Email:</strong> &nbsp;
+            <a href="mailto:{{ profile.email }}" class="text-decoration-none text-dark">
+              {{ profile.email }}
+            </a>
+          </div>
+        </div>
+        {% endif %}
+
+        {% if profile.linkedin %}
+        <div class="col">
+          <div class="d-flex align-items-center">
+            <i class="fab fa-linkedin text-primary me-2"></i>
+            <strong>LinkedIn:</strong> &nbsp;
+            <a href="{{ profile.linkedin }}" target="_blank" class="text-decoration-none">
+              View Profile <i class="fas fa-external-link-alt ms-1"></i>
+            </a>
+          </div>
+        </div>
+        {% endif %}
+
+        {% if profile.github %}
+        <div class="col">
+          <div class="d-flex align-items-center">
+            <i class="fab fa-github text-dark me-2"></i>
+            <strong>GitHub:</strong> &nbsp;
+            <a href="{{ profile.github }}" target="_blank" class="text-decoration-none">
+              @{{ profile.github|cut:"https://github.com/" }}
+            </a>
+          </div>
+        </div>
+        {% endif %}
+
+        {% if profile.resume %}
+        <div class="col">
+          <div class="d-flex align-items-center">
+            <i class="fas fa-file-alt text-info me-2"></i>
+            <strong>Resume:</strong> &nbsp;
+            <a href="{{ profile.resume.url }}" download class="ms-2">
+              <span class="badge bg-info text-dark p-2">
+                <i class="fas fa-file-pdf me-1"></i> Download CV
+              </span>
+            </a>
+          </div>
+        </div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 🔹 Call-to-Action -->
+<section class="text-center mt-5" data-aos="zoom-in-up">
+  <h4 class="mb-3">🚀 Ready to build something amazing?</h4>
+  <a href="/contact/" class="btn btn-lg btn-outline-primary shadow-sm px-4 py-2">
+    <i class="fas fa-handshake me-2"></i> Let’s Connect
+  </a>
+</section>
+
+<!-- 🔹 Page Styles -->
+<style>
+  .profile-wrapper {
+    position: relative;
+    width: 100%;
+    max-width: 300px;
+    border-radius: 50% / 30%;
+    overflow: hidden;
+    animation: float 6s ease-in-out infinite;
+  }
+
+  .animated-profile {
+    width: 100%;
+    height: auto;
+    border-radius: 50% / 30%;
+    object-fit: cover;
+    z-index: 2;
+    position: relative;
+    transition: transform 0.5s ease-in-out;
+  }
+
+  .glow-circle {
+    position: absolute;
+    top: -15%;
+    left: -15%;
+    width: 130%;
+    height: 130%;
+    background: radial-gradient(circle, rgba(0, 123, 255, 0.25), transparent);
+    border-radius: 50% / 30%;
+    filter: blur(40px);
+    animation: glowPulse 3s infinite ease-in-out;
+    z-index: 1;
+  }
+
+  @keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+  }
+
+  @keyframes glowPulse {
+    0% { opacity: 0.4; transform: scale(1); }
+    50% { opacity: 1; transform: scale(1.05); }
+    100% { opacity: 0.4; transform: scale(1); }
+  }
+
+  .slide-in {
+    animation: slideInLeft 1s ease forwards;
+  }
+
+  .fade-in {
+    animation: fadeInUp 1.2s ease forwards;
+  }
+
+  @keyframes slideInLeft {
+    0% { opacity: 0; transform: translateX(-30px); }
+    100% { opacity: 1; transform: translateX(0); }
+  }
+
+  @keyframes fadeInUp {
+    0% { opacity: 0; transform: translateY(30px); }
+    100% { opacity: 1; transform: translateY(0); }
+  }
+</style>
+
+{% endblock %}

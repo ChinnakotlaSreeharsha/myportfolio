@@ -1,0 +1,138 @@
+{% extends 'main/base.html' %}
+{% block content %}
+
+<div class="container py-5">
+  <h2 class="mb-5 text-center fw-bold display-6" data-aos="zoom-in">
+    <i class="fas fa-award text-warning me-2"></i> Certified & Credible
+  </h2>
+
+  <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-4">
+    {% for cert in certs %}
+      <div class="col" data-aos="fade-up" data-aos-delay="{{ forloop.counter0|add:'100' }}">
+        <div class="card h-100 border-0 rounded-4 shadow certificate-card">
+          {% if cert.badge_image %}
+            <div class="ratio ratio-16x9 rounded-top-4 bg-light">
+              <img src="{{ cert.badge_image.url }}" class="card-img-top object-fit-contain p-3" alt="{{ cert.title }} badge">
+            </div>
+          {% else %}
+            <div class="d-flex align-items-center justify-content-center rounded-top-4 bg-light" style="height: 180px;">
+              <i class="fas fa-image fa-2x text-muted"></i>
+            </div>
+          {% endif %}
+
+          <div class="card-body text-center">
+            <h5 class="fw-semibold text-primary">{{ cert.title }}</h5>
+            <p class="text-muted small mb-2">{{ cert.issuer }}</p>
+
+            {% if cert.badge_image %}
+              <button 
+                class="btn btn-outline-primary btn-sm open-cert-popup"
+                data-cert-title="{{ cert.title|escapejs }}"
+                data-cert-url="{{ cert.badge_image.url|escapejs }}">
+                <i class="fas fa-eye me-1"></i> View Certificate
+              </button>
+            {% elif cert.badge_url %}
+              <a href="{{ cert.badge_url }}" target="_blank" class="btn btn-outline-primary btn-sm">
+                <i class="fas fa-external-link-alt me-1"></i> View Certificate
+              </a>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+</div>
+
+<!-- Custom Modal -->
+<div id="customCertModal" class="custom-modal">
+  <div class="custom-modal-content">
+    <span class="custom-modal-close" id="customModalClose">&times;</span>
+    <h5 class="custom-modal-title" id="customModalTitle">Certification View</h5>
+    <div class="custom-modal-img-wrap">
+      <img id="customModalImage" src="" alt="Certification" class="custom-modal-img" />
+    </div>
+  </div>
+</div>
+
+<style>
+.custom-modal {
+  display: none;
+  position: fixed;
+  z-index: 3000;
+  left: 0; top: 0;
+  width: 100vw; height: 100vh;
+  background: rgba(25, 32, 48, 0.88);
+  justify-content: center;
+  align-items: center;
+}
+.custom-modal.show { display: flex; animation: fadeInModal 0.3s ease; }
+@keyframes fadeInModal { from { opacity: 0; } to { opacity: 1; } }
+.custom-modal-content {
+  background: #fff;
+  border-radius: 20px;
+  padding: 30px 20px;
+  max-width: 800px;
+  width: 95%;
+  text-align: center;
+  animation: popIn 0.3s ease-in-out;
+}
+@keyframes popIn { from { transform: scale(0.95); opacity: 0.5; } to { transform: scale(1); opacity: 1; } }
+.custom-modal-close {
+  position: absolute;
+  top: 12px; right: 20px;
+  font-size: 2rem;
+  color: #333;
+  cursor: pointer;
+}
+.custom-modal-close:hover { color: #e63946; }
+.custom-modal-img-wrap { display: flex; justify-content: center; align-items: center; min-height: 60vh; }
+.custom-modal-img {
+  max-width: 100%;
+  max-height: 65vh;
+  border-radius: 12px;
+  box-shadow: 0 0 12px rgba(0,0,0,0.15);
+}
+.certificate-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+  transition: all 0.3s ease;
+}
+</style>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+  const modal = document.getElementById('customCertModal');
+  const modalImg = document.getElementById('customModalImage');
+  const modalTitle = document.getElementById('customModalTitle');
+  const modalClose = document.getElementById('customModalClose');
+
+  document.querySelectorAll('.open-cert-popup').forEach(btn => {
+    btn.addEventListener('click', function () {
+      const imgUrl = btn.getAttribute('data-cert-url');
+      const title = btn.getAttribute('data-cert-title');
+      modalImg.src = imgUrl;
+      modalImg.alt = title + " badge";
+      modalTitle.textContent = title;
+      modal.classList.add('show');
+      document.body.classList.add('modal-open-custom');
+    });
+  });
+
+  function closeModal() {
+    modal.classList.remove('show');
+    document.body.classList.remove('modal-open-custom');
+    setTimeout(() => {
+      modalImg.src = "";
+      modalTitle.textContent = "Certification View";
+    }, 200);
+  }
+
+  modalClose.addEventListener('click', closeModal);
+  modal.addEventListener('click', e => { if (e.target === modal) closeModal(); });
+  document.addEventListener('keydown', e => {
+    if (modal.classList.contains('show') && e.key === "Escape") closeModal();
+  });
+});
+</script>
+
+{% endblock %}
