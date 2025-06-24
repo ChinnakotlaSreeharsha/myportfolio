@@ -18,14 +18,14 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
-
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-sjil*+jf-%67%a6*_@f#3!^235oj7pxn8!u5yffp-exk$m_w)n'
+SECRET_KEY = os.environ.get('SECRET_KEY', 'insecure-dev-key')
+
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['main.onrender.com']
 
 
 # Application definition
