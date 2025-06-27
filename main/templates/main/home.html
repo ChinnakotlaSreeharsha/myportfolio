@@ -1,13 +1,18 @@
 {% extends 'main/base.html' %}
 {% block content %}
 
+<!-- Theme Toggle Button (floating, sleek) -->
+<button id="theme-toggle" class="btn btn-theme-toggle position-fixed top-0 end-0 m-3 z-3" aria-label="Toggle theme">
+  <i class="fas fa-moon"></i>
+</button>
+
 <!-- 🌟 Hero Section -->
-<div class="container py-5">
+<section class="container py-5 position-relative hero-section">
   <div class="row align-items-center justify-content-center">
 
     <!-- Profile Image -->
-    <div class="col-md-5 position-relative text-center mb-4 mb-md-0" data-aos="fade-right">
-      <div class="profile-wrapper mx-auto">
+    <div class="col-md-5 text-center mb-4 mb-md-0" data-aos="fade-right">
+      <div class="profile-wrapper mx-auto glass shadow-lg">
         <div class="glow-circle"></div>
         <img src="{{ profile.profile_image.url }}" alt="Profile Picture" class="animated-profile shadow" loading="lazy">
       </div>
@@ -15,49 +20,88 @@
 
     <!-- Bio -->
     <div class="col-md-7 text-center text-md-start" data-aos="fade-left">
-      <h1 class="display-4 fw-bold mb-3 slide-in">
-        {{ profile.title }} <span class="text-primary">{{ profile.name }}</span>
+      <h1 class="display-4 fw-bold mb-3">
+        <span id="typewriter" class="d-block"></span>
+        <span class="text-primary fw-semibold professional-name" style="letter-spacing:0.5px;">{{ profile.name }}</span>
       </h1>
       <p class="lead mb-4 fade-in">{{ profile.bio }}</p>
       <div class="d-flex flex-wrap gap-3 justify-content-center justify-content-md-start">
-        <a href="/contact/" class="btn btn-lg btn-primary shadow-sm animate-btn">
+        <a href="{% url 'contact' %}" class="btn btn-lg btn-primary shadow-sm animate-btn">
           <i class="fas fa-paper-plane me-2"></i> Let's Talk
         </a>
-        <a href="#collab" class="btn btn-outline-secondary btn-lg shadow-sm animate-btn">
-          🤝 Open to Collaborate
+        <a href="#collab" class="btn btn-outline-accent btn-lg shadow-sm animate-btn">
+          <i class="fas fa-handshake"></i> Open to Collaborate
         </a>
       </div>
-      <div class="mt-4 d-flex justify-content-center justify-content-md-start gap-3" data-aos="fade-up" data-aos-delay="100">
+      <div class="social-row mt-4 d-flex justify-content-center justify-content-md-start gap-3" data-aos="fade-up" data-aos-delay="100">
         {% if profile.github %}
-          <a href="{{ profile.github }}" class="btn btn-outline-dark rounded-circle" target="_blank" aria-label="GitHub">
+          <a href="{{ profile.github }}" class="btn btn-social btn-github" target="_blank" aria-label="GitHub">
             <i class="fab fa-github fa-lg"></i>
           </a>
         {% endif %}
         {% if profile.linkedin %}
-          <a href="{{ profile.linkedin }}" class="btn btn-outline-primary rounded-circle" target="_blank" aria-label="LinkedIn">
+          <a href="{{ profile.linkedin }}" class="btn btn-social btn-linkedin" target="_blank" aria-label="LinkedIn">
             <i class="fab fa-linkedin fa-lg"></i>
           </a>
         {% endif %}
         {% if profile.email %}
-          <a href="mailto:{{ profile.email }}" class="btn btn-outline-danger rounded-circle" aria-label="Email">
+          <a href="mailto:{{ profile.email }}" class="btn btn-social btn-email" aria-label="Email">
             <i class="fas fa-envelope fa-lg"></i>
           </a>
         {% endif %}
       </div>
     </div>
   </div>
+</section>
+
+<!-- SVG Divider -->
+<div class="svg-divider-top">
+  <svg viewBox="0 0 500 60" preserveAspectRatio="none">
+    <path d="M0,0 C150,60 350,0 500,60 L500,00 L0,0 Z" style="stroke:none; fill:#f8f9fa;"></path>
+  </svg>
+</div>
+
+<!-- 🔢 Animated Statistics -->
+<section class="container py-4" data-aos="fade-up" data-aos-delay="200">
+  <div class="row text-center mb-5">
+    <div class="col-md-4 mb-3 mb-md-0">
+      <div class="stat-card glass shadow">
+        <h3 class="counter accent-text" data-target="8">0</h3>
+        <p>Years Coding</p>
+      </div>
+    </div>
+    <div class="col-md-4 mb-3 mb-md-0">
+      <div class="stat-card glass shadow">
+        <h3 class="counter accent-text" data-target="25">0</h3>
+        <p>Projects</p>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="stat-card glass shadow">
+        <h3 class="counter accent-text" data-target="12">0</h3>
+        <p>Certifications</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SVG Divider -->
+<div class="svg-divider-mid">
+  <svg viewBox="0 0 500 60" preserveAspectRatio="none">
+    <path d="M0,60 C150,0 350,60 500,0 L500,60 L0,60 Z" style="stroke:none; fill:#fff;"></path>
+  </svg>
 </div>
 
 <!-- 🌟 Achievements & Highlights -->
 <section class="container py-5" data-aos="fade-up" id="achievements">
-  <h2 class="text-center mb-5 fw-bold">
-    🌟 Achievements & Highlights
+  <h2 class="text-center mb-5 fw-bold section-title-accent">
+    <i class="fas fa-star accent-text"></i> Achievements & Highlights
   </h2>
   <div class="row g-4 justify-content-center">
 
-    <!-- Best Outgoing Student -->
+    <!-- Each achievement could be looped for more dynamic structure -->
     <div class="col-sm-6 col-lg-4">
-      <div class="card shadow border-0 achievement-card h-100 text-center pointer" data-bs-toggle="modal" data-bs-target="#achievement1">
+      <div class="card achievement-card glass shadow-lg h-100 text-center pointer" data-aos="zoom-in" data-aos-delay="100">
         <div class="card-body">
           <i class="fas fa-award fa-2x text-warning mb-3"></i>
           <h5 class="card-title">Best Outgoing Student</h5>
@@ -65,10 +109,8 @@
         </div>
       </div>
     </div>
-
-    <!-- IoT Innovation -->
     <div class="col-sm-6 col-lg-4">
-      <div class="card shadow border-0 achievement-card h-100 text-center pointer" data-bs-toggle="modal" data-bs-target="#achievement2">
+      <div class="card achievement-card glass shadow-lg h-100 text-center pointer" data-aos="zoom-in" data-aos-delay="150">
         <div class="card-body">
           <i class="fas fa-lightbulb fa-2x text-success mb-3"></i>
           <h5 class="card-title">IoT Innovation</h5>
@@ -76,10 +118,8 @@
         </div>
       </div>
     </div>
-
-    <!-- Startup Founder -->
     <div class="col-sm-6 col-lg-4">
-      <div class="card shadow border-0 achievement-card h-100 text-center pointer" data-bs-toggle="modal" data-bs-target="#achievement3">
+      <div class="card achievement-card glass shadow-lg h-100 text-center pointer" data-aos="zoom-in" data-aos-delay="200">
         <div class="card-body">
           <i class="fas fa-chart-line fa-2x text-primary mb-3"></i>
           <h5 class="card-title">Startup Founder</h5>
@@ -87,19 +127,22 @@
         </div>
       </div>
     </div>
-
   </div>
 </section>
 
+<!-- SVG Divider -->
+<div class="svg-divider-top">
+  <svg viewBox="0 0 500 60" preserveAspectRatio="none">
+    <path d="M0,0 C150,60 350,0 500,60 L500,00 L0,0 Z" style="stroke:none; fill:#f8f9fa;"></path>
+  </svg>
+</div>
 
 <!-- 💡 My Expertise -->
 <section class="container py-5 text-center" data-aos="fade-up" data-aos-delay="100">
-  <h2 class="mb-4 fw-bold display-6">💡 My Expertise</h2>
-
+  <h2 class="mb-4 fw-bold display-6 section-title-accent"><i class="fas fa-lightbulb accent-text"></i> My Expertise</h2>
   <div class="row g-4">
-    <!-- Full-Stack Development -->
     <div class="col-md-4">
-      <div class="expertise-card pointer" data-bs-toggle="modal" data-bs-target="#expertise1">
+      <div class="expertise-card pointer glass shadow" data-aos="flip-left" data-aos-delay="100">
         <div class="icon-wrapper bg-primary-subtle text-primary">
           <i class="fas fa-laptop-code fa-2x"></i>
         </div>
@@ -107,10 +150,8 @@
         <p class="text-muted">Laravel, Django, REST APIs, JS, Tailwind</p>
       </div>
     </div>
-
-    <!-- ML & AI -->
     <div class="col-md-4">
-      <div class="expertise-card pointer" data-bs-toggle="modal" data-bs-target="#expertise2">
+      <div class="expertise-card pointer glass shadow" data-aos="flip-left" data-aos-delay="200">
         <div class="icon-wrapper bg-success-subtle text-success">
           <i class="fas fa-robot fa-2x"></i>
         </div>
@@ -118,10 +159,8 @@
         <p class="text-muted">TensorFlow, NLP, OpenCV, Scikit-learn</p>
       </div>
     </div>
-
-    <!-- Data Engineering -->
     <div class="col-md-4">
-      <div class="expertise-card pointer" data-bs-toggle="modal" data-bs-target="#expertise3">
+      <div class="expertise-card pointer glass shadow" data-aos="flip-left" data-aos-delay="300">
         <div class="icon-wrapper bg-warning-subtle text-warning">
           <i class="fas fa-database fa-2x"></i>
         </div>
@@ -132,56 +171,154 @@
   </div>
 </section>
 
-
 <!-- 🤝 Collaborate -->
 <section id="collab" class="py-5 bg-light mt-5 text-center" data-aos="zoom-in">
   <div class="container">
-    <h2 class="mb-3">🤝 Open to Collaborate</h2>
+    <h2 class="mb-3 section-title-accent"><i class="fas fa-handshake accent-text"></i> Open to Collaborate</h2>
     <p class="lead">Let’s create impactful tech solutions together. Open for freelance, startup, or full-time opportunities.</p>
-    <a href="/contact/" class="btn btn-outline-primary btn-lg mt-3">
+    <a href="{% url 'contact' %}" class="btn btn-outline-accent btn-lg mt-3">
       <i class="fas fa-comments me-2"></i> Get in Touch
     </a>
   </div>
 </section>
 
-<!-- 🎨 Styles -->
+<!-- 🎨 Styles & Advanced Effects -->
 <style>
+  :root {
+    --accent: #1abc9c;
+    --accent-light: #e7fcf7;
+    --accent-text: #1abc9c;
+    --btn-social-bg: #fff;
+    --btn-social-hover-bg: #f5f8fa;
+  }
+  body.dark-theme {
+    background: #10131a !important;
+    color: #e0e7f1 !important;
+  }
+  .dark-theme .card, .dark-theme .expertise-card, .dark-theme .glass {
+    background: rgba(40,40,55,0.85) !important;
+    color: #e0e7f1 !important;
+    border-color: #333 !important;
+  }
+  .dark-theme .bg-light { background: #181b1f !important; }
+  .dark-theme .section-title-accent,
+  .section-title-accent { color: var(--accent-text) !important; }
+  .dark-theme .stat-card { background: rgba(30,40,60,0.82) !important; }
+  .glass {
+    background: rgba(255,255,255,0.17);
+    border-radius: 16px;
+    box-shadow: 0 4px 32px rgba(31,38,135,0.17);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255,255,255,0.18);
+  }
+  .svg-divider-top, .svg-divider-mid { overflow:hidden; line-height:0; }
+  .svg-divider-top svg, .svg-divider-mid svg { width:100%; height:60px; display:block;}
+  .stat-card {
+    background: #fff;
+    border-radius: 14px;
+    padding: 30px 0 18px 0;
+    margin-bottom: 0.5rem;
+    box-shadow: 0 2px 14px rgba(44,62,80,0.06);
+    transition: box-shadow 0.24s, transform 0.24s;
+  }
+  .stat-card:hover {
+    box-shadow: 0 8px 32px rgba(44,62,80,0.13);
+    transform: scale(1.03);
+  }
+  .accent-text { color: var(--accent-text) !important; }
+  .btn-outline-accent {
+    border-color: var(--accent);
+    color: var(--accent-text);
+    background: #fff;
+    transition: background 0.19s, color 0.19s, border 0.19s;
+  }
+  .btn-outline-accent:hover, .btn-outline-accent:focus {
+    background: var(--accent);
+    color: #fff;
+    border-color: var(--accent);
+  }
+  .btn-theme-toggle {
+    border-radius: 50%;
+    width: 44px;
+    height: 44px;
+    background: #fff;
+    color: var(--accent-text);
+    border: 2px solid var(--accent);
+    box-shadow: 0 2px 10px rgba(44,62,80,0.08);
+    font-size: 1.45rem;
+    z-index: 1100;
+    transition: background 0.2s, color 0.2s, border 0.2s;
+  }
+  .btn-theme-toggle:focus {
+    outline: none;
+    box-shadow: 0 0 0 2px var(--accent);
+  }
+  .btn-theme-toggle:hover {
+    background: var(--accent);
+    color: #fff;
+    border-color: var(--accent);
+  }
+  .btn-social {
+    border: none;
+    background: var(--btn-social-bg);
+    color: #444;
+    box-shadow: 0 2px 8px rgba(44,62,80,0.08);
+    width: 46px;
+    height: 46px;
+    border-radius: 50%;
+    font-size: 1.3em;
+    transition: background 0.16s, color 0.16s;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 3px;
+  }
+  .btn-social:hover, .btn-social:focus {
+    background: var(--accent-light);
+    color: var(--accent-text);
+  }
+  .btn-github { color: #222; }
+  .btn-github:hover { background: #222 !important; color: #fff !important; }
+  .btn-linkedin { color: #0a66c2; }
+  .btn-linkedin:hover { background: #0a66c2 !important; color: #fff !important; }
+  .btn-email { color: #e63946; }
+  .btn-email:hover { background: #e63946 !important; color: #fff !important; }
   .expertise-card {
-  background-color: #fff;
-  border-radius: 16px;
-  padding: 30px 20px;
-  transition: all 0.3s ease;
-  box-shadow: 0 0 8px rgba(0,0,0,0.05);
-}
-.expertise-card:hover {
-  transform: translateY(-6px);
-  box-shadow: 0 10px 20px rgba(0,0,0,0.08);
-  cursor: pointer;
-}
-
-.icon-wrapper {
-  display: inline-flex;
-  justify-content: center;
-  align-items: center;
-  width: 64px;
-  height: 64px;
-  border-radius: 12px;
-  font-size: 28px;
-  margin-bottom: 10px;
-  transition: all 0.3s ease-in-out;
-}
-
+    background-color: #fff;
+    border-radius: 16px;
+    padding: 30px 20px;
+    transition: all 0.3s cubic-bezier(0.5,1.5,0.5,1);
+    box-shadow: 0 0 8px rgba(0,0,0,0.05);
+    will-change: transform, box-shadow;
+  }
+  .expertise-card:hover {
+    transform: translateY(-6px) scale(1.03);
+    box-shadow: 0 10px 24px rgba(0,0,0,0.12);
+    cursor: pointer;
+  }
+  .icon-wrapper {
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    width: 64px;
+    height: 64px;
+    border-radius: 12px;
+    font-size: 28px;
+    margin-bottom: 10px;
+    transition: all 0.3s;
+  }
   .achievement-card {
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-  border-radius: 1rem;
-  cursor: pointer;
-}
-
-.achievement-card:hover {
-  transform: translateY(-8px);
-  box-shadow: 0 12px 20px rgba(0, 0, 0, 0.12);
-}
-
+    transition: transform 0.3s cubic-bezier(0.5,1.5,0.5,1), box-shadow 0.3s;
+    border-radius: 1rem;
+    cursor: pointer;
+    will-change: transform, box-shadow;
+    background: linear-gradient(135deg, #f8fafc 60%, #e7fcf7 100%);
+  }
+  .achievement-card:hover {
+    transform: translateY(-8px) scale(1.04);
+    box-shadow: 0 12px 28px rgba(0, 0, 0, 0.17);
+    background: linear-gradient(135deg, #e7fcf7 60%, #f8fafc 100%);
+  }
   .profile-wrapper {
     position: relative;
     width: 100%;
@@ -189,12 +326,18 @@
     border-radius: 25px;
     overflow: hidden;
     animation: float 6s ease-in-out infinite;
+    border: 4px solid transparent;
+    background: linear-gradient(135deg, #6dd5ed 0%, #2193b0 100%);
+    background-clip: padding-box, border-box;
+    box-shadow: 0 6px 32px rgba(80,130,255,0.08), 0 0 0 8px rgba(80,130,255,0.07);
   }
   .animated-profile {
     width: 100%;
     border-radius: 25px;
     object-fit: cover;
-    transition: transform 0.5s ease;
+    transition: transform 0.5s;
+    z-index: 2;
+    position: relative;
   }
   .glow-circle {
     position: absolute;
@@ -202,25 +345,93 @@
     left: -15%;
     width: 130%;
     height: 130%;
-    background: radial-gradient(circle, rgba(0, 123, 255, 0.25), transparent);
-    filter: blur(40px);
+    background: radial-gradient(circle, rgba(0, 123, 255, 0.22), transparent);
+    filter: blur(36px);
     animation: glowPulse 3s infinite ease-in-out;
     z-index: 1;
   }
-  .card-hover:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 0.5rem 1rem rgba(0,0,0,0.15);
-    transition: 0.3s;
+  .professional-name {
+    font-family: 'Segoe UI', 'Arial', sans-serif;
+    font-size: 2.25rem;
+    font-weight: 600;
+    color: #1a2639 !important;
+    text-shadow: 0 1px 0 #fff, 0 2px 6px rgba(80,130,255,0.08);
   }
   @keyframes float {
-    0%, 100% { transform: translateY(0); }
-    50% { transform: translateY(-10px); }
+    0%, 100% { transform: translateY(0);}
+    50% { transform: translateY(-10px);}
   }
   @keyframes glowPulse {
-    0% { opacity: 0.4; transform: scale(1); }
-    50% { opacity: 1; transform: scale(1.05); }
-    100% { opacity: 0.4; transform: scale(1); }
+    0% { opacity: 0.5; transform: scale(1);}
+    50% { opacity: 1; transform: scale(1.06);}
+    100% { opacity: 0.5; transform: scale(1);}
+  }
+  @media (max-width: 900px) {
+    .stat-card { margin-bottom: 1.3rem; }
   }
 </style>
 
+<!-- Advanced UI Scripts -->
+<script src="https://cdn.jsdelivr.net/npm/vanilla-tilt@1.7.3/dist/vanilla-tilt.min.js"></script>
+<script src="https://unpkg.com/typewriter-effect@latest/dist/core.js"></script>
+<script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+<link rel="stylesheet" href="https://unpkg.com/aos@2.3.1/dist/aos.css" />
+
+<script>
+  // Typewriter effect
+  new Typewriter('#typewriter', {
+    strings: [
+      '{{ profile.headline|default:"Software Engineer" }}',
+      'AI Specialist',
+      'Technology Leader'
+    ],
+    autoStart: true,
+    loop: true,
+    delay: 80,
+    deleteSpeed: 40,
+    pauseFor: 1500,
+    cursor: '|'
+  });
+
+  // Animated counters
+  document.addEventListener('DOMContentLoaded', function() {
+    document.querySelectorAll('.counter').forEach(function(counter) {
+      function animateCount() {
+        const target = +counter.getAttribute('data-target');
+        const count = +counter.innerText;
+        const inc = Math.max(1, Math.ceil(target / 40));
+        if(count < target) {
+          counter.innerText = Math.min(target, count + inc);
+          setTimeout(animateCount, 28);
+        } else {
+          counter.innerText = target;
+        }
+      }
+      animateCount();
+    });
+  });
+
+  // Card tilt
+  VanillaTilt.init(document.querySelectorAll('.achievement-card, .expertise-card'), {
+    max: 10,
+    speed: 350,
+    glare: true,
+    "max-glare": 0.15
+  });
+
+  // Theme toggle
+  document.getElementById('theme-toggle').onclick = function() {
+    document.body.classList.toggle('dark-theme');
+    this.innerHTML = document.body.classList.contains('dark-theme')
+      ? '<i class="fas fa-sun"></i>'
+      : '<i class="fas fa-moon"></i>';
+  };
+
+  // AOS Animate on Scroll
+  AOS.init({
+    offset: 80,
+    duration: 700,
+    once: true
+  });
+</script>
 {% endblock %}
