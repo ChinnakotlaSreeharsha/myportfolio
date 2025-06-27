@@ -472,9 +472,9 @@
       <!-- Scan to Download -->
       <div class="footer-column align-items-center text-center" style="gap:0.5rem;">
         <h6 class="footer-section-title">Scan to Download</h6>
-        <a href="/static/files/resume.pdf" class="btn btn-outline-accent btn-sm mb-2"
+        <a href="{{ resume.url }}" class="btn btn-outline-accent btn-sm mb-2"
            download style="font-weight:600; display:inline-block; margin-bottom: 0.6rem;">
-          <i class="fas fa-download"></i> Download Resume
+          {% comment %} <i class="fas fa-download"></i> Download Resume {% endcomment %}
         </a>
         <div class="footer-qr" style="margin-top: 0;">
           <img src="https://api.qrserver.com/v1/create-qr-code/?size=90x90&data=https://yourdomain.com/static/files/resume.pdf"
