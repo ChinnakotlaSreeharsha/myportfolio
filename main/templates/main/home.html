@@ -10,16 +10,23 @@
 <section class="container py-5 position-relative hero-section">
   <div class="row align-items-center justify-content-center">
 
-    <!-- Profile Image -->
-    <div class="col-md-5 text-center mb-4 mb-md-0" data-aos="fade-right">
-      <div class="profile-wrapper mx-auto glass shadow-lg">
-        <div class="glow-circle"></div>
-        <img src="{{ profile.profile_image.url }}" alt="Profile Picture" class="animated-profile shadow" loading="lazy">
+    <!-- Lottie Animation (Right side, Increased Size) -->
+    <div class="col-md-7 text-center text-md-end order-md-2 mb-4 mb-md-0" data-aos="fade-right">
+      <div style="display:inline-block; position:relative;">
+        <!-- Optionally add glow using box-shadow or filter -->
+        <lottie-player 
+          src="https://assets1.lottiefiles.com/packages/lf20_w51pcehl.json"
+          background="transparent"
+          style="width: 500px; height: 500px; box-shadow: 0 0 80px 0 #ffffffff, 0 0 40px 0 #fff8; filter: brightness(1.15);"
+          speed="1"
+          loop
+          autoplay>
+        </lottie-player>
       </div>
     </div>
 
     <!-- Bio -->
-    <div class="col-md-7 text-center text-md-start" data-aos="fade-left">
+    <div class="col-md-5 text-center text-md-start order-md-1" data-aos="fade-left">
       <h1 class="display-4 fw-bold mb-3">
         <span id="typewriter" class="d-block"></span>
         <span class="text-primary fw-semibold professional-name" style="letter-spacing:0.5px;">{{ profile.name }}</span>
@@ -61,29 +68,77 @@
   </svg>
 </div>
 
-<!-- 🔢 Animated Statistics -->
-<section class="container py-4" data-aos="fade-up" data-aos-delay="200">
-  <div class="row text-center mb-5">
-    <div class="col-md-4 mb-3 mb-md-0">
-      <div class="stat-card glass shadow">
-        <h3 class="counter accent-text" data-target="8">0</h3>
-        <p>Years Coding</p>
-      </div>
+<section class="container py-4 position-relative" data-aos="fade-up" data-aos-delay="200">
+  <div class="stats-glow-bg"></div>
+  <div class="row align-items-center position-relative" style="z-index:2;">
+    <!-- Animation on left -->
+    <div class="col-md-5 d-flex justify-content-center mb-4 mb-md-0">
+      <lottie-player 
+        src="https://assets10.lottiefiles.com/packages/lf20_qp1q7mct.json"
+        background="transparent"
+        speed="1"
+        style="width: 180px; height: 180px; filter: brightness(1.15);"
+        loop
+        autoplay>
+      </lottie-player>
     </div>
-    <div class="col-md-4 mb-3 mb-md-0">
-      <div class="stat-card glass shadow">
-        <h3 class="counter accent-text" data-target="25">0</h3>
-        <p>Projects</p>
-      </div>
-    </div>
-    <div class="col-md-4">
-      <div class="stat-card glass shadow">
-        <h3 class="counter accent-text" data-target="12">0</h3>
-        <p>Certifications</p>
+    <!-- Stats on right -->
+    <div class="col-md-7">
+      <div class="row text-center">
+        <div class="col-12 col-md-4 mb-3 mb-md-0">
+          <div class="stat-card glass shadow">
+            <h3 class="counter accent-text" data-target="8">0</h3>
+            <p>Years Coding</p>
+          </div>
+        </div>
+        <div class="col-12 col-md-4 mb-3 mb-md-0">
+          <div class="stat-card glass shadow">
+            <h3 class="counter accent-text" data-target="25">0</h3>
+            <p>Projects</p>
+          </div>
+        </div>
+        <div class="col-12 col-md-4">
+          <div class="stat-card glass shadow">
+            <h3 class="counter accent-text" data-target="12">0</h3>
+            <p>Certifications</p>
+          </div>
+        </div>
       </div>
     </div>
   </div>
 </section>
+
+<style>
+.stats-glow-bg {
+  position: absolute;
+  left: 50%; top: 60px;
+  transform: translateX(-50%);
+  width: 520px;
+  height: 180px;
+  z-index: 1;
+  pointer-events: none;
+  background: radial-gradient(circle at 50% 40%, #1abc9c33 0%, #fff 70%, transparent 100%);
+  filter: blur(40px) brightness(1.2);
+  opacity: 0.7;
+}
+@media (max-width: 900px) {
+  .stats-glow-bg {
+    width: 90vw;
+    height: 120px;
+    top: 40px;
+    filter: blur(32px) brightness(1.1);
+  }
+  /* Stack animation and stats for mobile */
+  .row.align-items-center > .col-md-5,
+  .row.align-items-center > .col-md-7 {
+    flex: 0 0 100%;
+    max-width: 100%;
+  }
+  .row.align-items-center {
+    flex-direction: column !important;
+  }
+}
+</style>
 
 <!-- SVG Divider -->
 <div class="svg-divider-mid">
@@ -319,37 +374,6 @@
     box-shadow: 0 12px 28px rgba(0, 0, 0, 0.17);
     background: linear-gradient(135deg, #e7fcf7 60%, #f8fafc 100%);
   }
-  .profile-wrapper {
-    position: relative;
-    width: 100%;
-    max-width: 320px;
-    border-radius: 25px;
-    overflow: hidden;
-    animation: float 6s ease-in-out infinite;
-    border: 4px solid transparent;
-    background: linear-gradient(135deg, #6dd5ed 0%, #2193b0 100%);
-    background-clip: padding-box, border-box;
-    box-shadow: 0 6px 32px rgba(80,130,255,0.08), 0 0 0 8px rgba(80,130,255,0.07);
-  }
-  .animated-profile {
-    width: 100%;
-    border-radius: 25px;
-    object-fit: cover;
-    transition: transform 0.5s;
-    z-index: 2;
-    position: relative;
-  }
-  .glow-circle {
-    position: absolute;
-    top: -15%;
-    left: -15%;
-    width: 130%;
-    height: 130%;
-    background: radial-gradient(circle, rgba(0, 123, 255, 0.22), transparent);
-    filter: blur(36px);
-    animation: glowPulse 3s infinite ease-in-out;
-    z-index: 1;
-  }
   .professional-name {
     font-family: 'Segoe UI', 'Arial', sans-serif;
     font-size: 2.25rem;
@@ -368,6 +392,18 @@
   }
   @media (max-width: 900px) {
     .stat-card { margin-bottom: 1.3rem; }
+    /* Responsive: Animation and Bio stack vertically */
+    .row.align-items-center .order-md-2,
+    .row.align-items-center .order-md-1 {
+      order: unset !important;
+    }
+    lottie-player {
+      width: 100% !important;
+      height: auto !important;
+      max-width: 350px !important;
+      margin-left: auto !important;
+      margin-right: auto !important;
+    }
   }
 </style>
 
@@ -375,6 +411,7 @@
 <script src="https://cdn.jsdelivr.net/npm/vanilla-tilt@1.7.3/dist/vanilla-tilt.min.js"></script>
 <script src="https://unpkg.com/typewriter-effect@latest/dist/core.js"></script>
 <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+<script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
 <link rel="stylesheet" href="https://unpkg.com/aos@2.3.1/dist/aos.css" />
 
 <script>
