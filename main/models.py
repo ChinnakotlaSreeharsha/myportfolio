@@ -10,6 +10,7 @@ class Profile(models.Model):
     email = models.EmailField()
     github = models.URLField()
     linkedin = models.URLField()
+    credly = models.URLField(blank=True, null=True)
 
     def __str__(self):
         return self.name

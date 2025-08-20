@@ -79,11 +79,24 @@
             <i class="fab fa-github text-dark me-2"></i>
             <strong>GitHub:</strong> &nbsp;
             <a href="{{ profile.github }}" target="_blank" class="text-decoration-none">
-              @{{ profile.github|cut:"https://github.com/" }}
+              @{{ profile.github|cut:"https://github.com/" }} <i class="fas fa-external-link-alt ms-1"></i>
             </a>
           </div>
         </div>
         {% endif %}
+
+        {% if profile.credly %}
+        <div class="col">
+          <div class="d-flex align-items-center">
+            <i class="fas fa-award text-dark me-2"></i>
+            <strong>Credly:</strong> &nbsp;
+            <a href="{{ profile.credly }}" target="_blank" class="text-decoration-none">
+              View Badges <i class="fas fa-external-link-alt ms-1"></i>
+            </a>
+          </div>
+        </div>
+        {% endif %}
+
 
         {% comment %} {% if profile.resume %}
         <div class="col">
