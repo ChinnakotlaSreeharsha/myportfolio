@@ -28,7 +28,6 @@
     <!-- Bio -->
     <div class="col-md-5 text-center text-md-start order-md-1" data-aos="fade-left">
       <h1 class="display-4 fw-bold mb-3">
-        <span id="typewriter" class="d-block"></span>
         <span class="text-primary fw-semibold professional-name" style="letter-spacing:0.5px;">{{ profile.name }}</span>
       </h1>
       <p class="lead mb-4 fade-in">{{ profile.bio }}</p>
@@ -409,66 +408,9 @@
 
 <!-- Advanced UI Scripts -->
 <script src="https://cdn.jsdelivr.net/npm/vanilla-tilt@1.7.3/dist/vanilla-tilt.min.js"></script>
-<script src="https://unpkg.com/typewriter-effect@latest/dist/core.js"></script>
 <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
 <script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
 <link rel="stylesheet" href="https://unpkg.com/aos@2.3.1/dist/aos.css" />
 
-<script>
-  // Typewriter effect
-  new Typewriter('#typewriter', {
-    strings: [
-      '{{ profile.headline|default:"Software Engineer" }}',
-      'AI Specialist',
-      'Technology Leader'
-    ],
-    autoStart: true,
-    loop: true,
-    delay: 80,
-    deleteSpeed: 40,
-    pauseFor: 1500,
-    cursor: '|'
-  });
 
-  // Animated counters
-  document.addEventListener('DOMContentLoaded', function() {
-    document.querySelectorAll('.counter').forEach(function(counter) {
-      function animateCount() {
-        const target = +counter.getAttribute('data-target');
-        const count = +counter.innerText;
-        const inc = Math.max(1, Math.ceil(target / 40));
-        if(count < target) {
-          counter.innerText = Math.min(target, count + inc);
-          setTimeout(animateCount, 28);
-        } else {
-          counter.innerText = target;
-        }
-      }
-      animateCount();
-    });
-  });
-
-  // Card tilt
-  VanillaTilt.init(document.querySelectorAll('.achievement-card, .expertise-card'), {
-    max: 10,
-    speed: 350,
-    glare: true,
-    "max-glare": 0.15
-  });
-
-  // Theme toggle
-  document.getElementById('theme-toggle').onclick = function() {
-    document.body.classList.toggle('dark-theme');
-    this.innerHTML = document.body.classList.contains('dark-theme')
-      ? '<i class="fas fa-sun"></i>'
-      : '<i class="fas fa-moon"></i>';
-  };
-
-  // AOS Animate on Scroll
-  AOS.init({
-    offset: 80,
-    duration: 700,
-    once: true
-  });
-</script>
 {% endblock %}
