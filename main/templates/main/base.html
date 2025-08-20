@@ -412,7 +412,7 @@
   <!-- Sticky Navbar -->
   <nav class="navbar navbar-expand-lg base-navbar">
     <div class="container">
-      <a class="navbar-brand" href="{% url 'home' %}">{{ profile.name }}</a>
+      <a class="navbar-brand" href="{% url 'home' %}">𝑺𝒓𝒆𝒆</a>
       <button
         class="navbar-toggler"
         type="button"
@@ -432,7 +432,7 @@
           <li class="nav-item"><a href="{% url 'projects' %}" class="nav-link"><i class="fas fa-code me-1"></i>Projects</a></li>
           <li class="nav-item"><a href="{% url 'experience' %}" class="nav-link"><i class="fas fa-briefcase me-1"></i>Experience</a></li>
           <li class="nav-item"><a href="{% url 'certifications' %}" class="nav-link"><i class="fas fa-certificate me-1"></i>Certifications</a></li>
-          <li class="nav-item"><a href="{% url 'resume' %}" class="nav-link"><i class="fas fa-file-alt me-1"></i>Resume</a></li>
+          {% comment %} <li class="nav-item"><a href="{% url 'resume' %}" class="nav-link"><i class="fas fa-file-alt me-1"></i>Resume</a></li> {% endcomment %}
           <li class="nav-item"><a href="{% url 'contact' %}" class="nav-link"><i class="fas fa-envelope me-1"></i>Contact</a></li>
         </ul>
       </div>
@@ -456,7 +456,7 @@
           <li><a href="{% url 'projects' %}"><i class="fas fa-code me-1"></i>Projects</a></li>
           <li><a href="{% url 'experience' %}"><i class="fas fa-briefcase me-1"></i>Experience</a></li>
           <li><a href="{% url 'certifications' %}"><i class="fas fa-certificate me-1"></i>Certifications</a></li>
-          <li><a href="{% url 'resume' %}"><i class="fas fa-file-alt me-1"></i>Resume</a></li>
+          {% comment %} <li><a href="{% url 'resume' %}"><i class="fas fa-file-alt me-1"></i>Resume</a></li> {% endcomment %}
           <li><a href="{% url 'contact' %}"><i class="fas fa-envelope me-1"></i>Contact</a></li>
         </ul>
       </div>
