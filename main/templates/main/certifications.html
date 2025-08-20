@@ -6,40 +6,9 @@
     <i class="fas fa-award text-warning me-2"></i> Certified & Credible
   </h2>
 
-  <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-4">
-    {% for cert in certs %}
-      <div class="col" data-aos="fade-up" data-aos-delay="{{ forloop.counter0|add:'100' }}">
-        <div class="card h-100 border-0 rounded-4 shadow certificate-card">
-          {% if cert.badge_image %}
-            <div class="ratio ratio-16x9 rounded-top-4 bg-light">
-              <img src="{{ cert.badge_image.url }}" class="card-img-top object-fit-contain p-3" alt="{{ cert.title }} badge">
-            </div>
-          {% else %}
-            <div class="d-flex align-items-center justify-content-center rounded-top-4 bg-light" style="height: 180px;">
-              <i class="fas fa-image fa-2x text-muted"></i>
-            </div>
-          {% endif %}
-
-          <div class="card-body text-center">
-            <h5 class="fw-semibold text-primary">{{ cert.title }}</h5>
-            <p class="text-muted small mb-2">{{ cert.issuer }}</p>
-
-            {% if cert.badge_image %}
-              <button 
-                class="btn btn-outline-primary btn-sm open-cert-popup"
-                data-cert-title="{{ cert.title|escapejs }}"
-                data-cert-url="{{ cert.badge_image.url|escapejs }}">
-                <i class="fas fa-eye me-1"></i> View Certificate
-              </button>
-            {% elif cert.badge_url %}
-              <a href="{{ cert.badge_url }}" target="_blank" class="btn btn-outline-primary btn-sm">
-                <i class="fas fa-external-link-alt me-1"></i> View Certificate
-              </a>
-            {% endif %}
-          </div>
-        </div>
-      </div>
-    {% endfor %}
+  <!-- LinkedIn Profile Badge Cards -->
+  <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-4 justify-content-center" id="linkedinCertsContainer">
+    <!-- LinkedIn badges will be dynamically added here -->
   </div>
 </div>
 
@@ -55,6 +24,7 @@
 </div>
 
 <style>
+/* Modal & Card Styles */
 .custom-modal {
   display: none;
   position: fixed;
@@ -99,25 +69,40 @@
 }
 </style>
 
+<script src="https://platform.linkedin.com/badges/js/profile.js" async defer></script>
 <script>
 document.addEventListener("DOMContentLoaded", function () {
   const modal = document.getElementById('customCertModal');
   const modalImg = document.getElementById('customModalImage');
   const modalTitle = document.getElementById('customModalTitle');
   const modalClose = document.getElementById('customModalClose');
+  const container = document.getElementById('linkedinCertsContainer');
 
-  document.querySelectorAll('.open-cert-popup').forEach(btn => {
-    btn.addEventListener('click', function () {
-      const imgUrl = btn.getAttribute('data-cert-url');
-      const title = btn.getAttribute('data-cert-title');
-      modalImg.src = imgUrl;
-      modalImg.alt = title + " badge";
-      modalTitle.textContent = title;
-      modal.classList.add('show');
-      document.body.classList.add('modal-open-custom');
-    });
+  // LinkedIn badge data
+  const linkedinCerts = [
+    { vanity: "chinnakotla-sree-harsha-85502620b" }
+  ];
+
+  // Create card for each LinkedIn badge
+  linkedinCerts.forEach(cert => {
+    const col = document.createElement("div");
+    col.className = "col";
+    col.innerHTML = `
+      <div class="card h-100 border-0 rounded-4 shadow certificate-card d-flex align-items-center justify-content-center p-3" style="height: 180px;">
+        <div class="badge-base LI-profile-badge" 
+             data-locale="en_US" 
+             data-size="medium" 
+             data-theme="light" 
+             data-type="VERTICAL" 
+             data-vanity="${cert.vanity}" 
+             data-version="v1">
+        </div>
+      </div>
+    `;
+    container.appendChild(col);
   });
 
+  // Modal handling (optional if you want click-to-view larger badges)
   function closeModal() {
     modal.classList.remove('show');
     document.body.classList.remove('modal-open-custom');
@@ -134,5 +119,6 @@ document.addEventListener("DOMContentLoaded", function () {
   });
 });
 </script>
+
 
 {% endblock %}
