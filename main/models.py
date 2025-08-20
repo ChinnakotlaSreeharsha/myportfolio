@@ -17,11 +17,19 @@ class Profile(models.Model):
 
 class Skill(models.Model):
     CATEGORY_CHOICES = [
-        ('Frontend', 'Frontend'),
-        ('Backend', 'Backend'),
-        ('Data', 'Data'),
-        ('DevOps', 'DevOps'),
-        ('Other', 'Other'),
+        ('Python', 'Data'),
+        ('SQL', 'Data'),
+        ('Pandas', 'Data'),
+        ('NumPy', 'Data'),
+        ('ML Integration', 'Data'),
+        ('Data Wrangling', 'Data'),
+        ('Automation Scripts', 'Backend'),
+        ('Django', 'Backend'),
+        ('Git', 'DevOps'),
+        ('UX for Data', 'Frontend'),
+        ('Dashboard Design', 'Frontend'),
+        ('Problem Solving', 'Other'),
+        ('Communication', 'Other'),
     ]
 
     name = models.CharField(max_length=100)
