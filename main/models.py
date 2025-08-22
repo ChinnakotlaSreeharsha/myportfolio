@@ -64,14 +64,26 @@ class Experience(models.Model):
     def __str__(self):
         return self.title
 
+from django.db import models
+
 class Certification(models.Model):
-    title = models.CharField(max_length=200)
-    issuer = models.CharField(max_length=200)
-    badge_image = models.ImageField(upload_to='certifications/', blank=True, null=True)
-    badge_url = models.URLField()
+    name = models.CharField(max_length=255)
+    issuer = models.CharField(max_length=255, blank=True, null=True)
+    issue_date_month = models.CharField(max_length=20, blank=True, null=True)
+    issue_date_year = models.CharField(max_length=4, blank=True, null=True)
+    expiration_date_month = models.CharField(max_length=20, blank=True, null=True)
+    expiration_date_year = models.CharField(max_length=4, blank=True, null=True)
+    credential_id = models.CharField(max_length=255, blank=True, null=True)
+    credential_url = models.URLField(blank=True, null=True)
+    issuer_logo = models.ImageField(upload_to="cert_logos/", blank=True, null=True)  # optional logo
+
+    class Meta:
+        ordering = ['-issue_date_year', '-issue_date_month']
 
     def __str__(self):
-        return self.title
+        return f"{self.name} ({self.issuer})" if self.issuer else self.name
+
+
 
 class ContactMessage(models.Model):
     name = models.CharField(max_length=100)

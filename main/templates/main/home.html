@@ -84,21 +84,24 @@
     <!-- Stats on right -->
     <div class="col-md-7">
       <div class="row text-center">
+        <!-- Years Coding -->
         <div class="col-12 col-md-4 mb-3 mb-md-0">
           <div class="stat-card glass shadow">
-            <h3 class="counter accent-text" data-target="8">0</h3>
+            <h3 class="counter accent-text" data-target="2">0</h3>
             <p>Years Coding</p>
           </div>
         </div>
+        <!-- Projects -->
         <div class="col-12 col-md-4 mb-3 mb-md-0">
           <div class="stat-card glass shadow">
-            <h3 class="counter accent-text" data-target="25">0</h3>
+            <h3 class="counter accent-text" data-target="10">0</h3>
             <p>Projects</p>
           </div>
         </div>
+        <!-- Certifications (dynamic) -->
         <div class="col-12 col-md-4">
           <div class="stat-card glass shadow">
-            <h3 class="counter accent-text" data-target="12">0</h3>
+            <h3 class="counter accent-text" data-target="{{ certifications_count }}">0</h3>
             <p>Certifications</p>
           </div>
         </div>
@@ -106,6 +109,40 @@
     </div>
   </div>
 </section>
+
+<script>
+  // Animate counters
+  function animateCounter(counter) {
+    const target = +counter.getAttribute('data-target');
+    let count = 0;
+    const increment = target / 200;
+
+    const updateCounter = () => {
+      count += increment;
+      if (count < target) {
+        counter.innerText = Math.ceil(count);
+        requestAnimationFrame(updateCounter);
+      } else {
+        counter.innerText = target;
+      }
+    };
+    updateCounter();
+  }
+
+  // Observe when counters are visible
+  const counters = document.querySelectorAll('.counter');
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        animateCounter(entry.target);
+        observer.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.5 });
+
+  counters.forEach(counter => observer.observe(counter));
+</script>
+
 
 <style>
 .stats-glow-bg {

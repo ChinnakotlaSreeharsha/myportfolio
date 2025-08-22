@@ -2,123 +2,88 @@
 {% block content %}
 
 <div class="container py-5">
-  <h2 class="mb-5 text-center fw-bold display-6" data-aos="zoom-in">
+  <h2 class="mb-5 text-center fw-bold display-5">
     <i class="fas fa-award text-warning me-2"></i> Certified & Credible
   </h2>
 
-  <!-- LinkedIn Profile Badge Cards -->
-  <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-4 justify-content-center" id="linkedinCertsContainer">
-    <!-- LinkedIn badges will be dynamically added here -->
-  </div>
-</div>
+  <div class="row g-4">
+    {% for cert in certs %}
+    <div class="col-xl-3 col-lg-4 col-md-6 col-sm-12">
+      <div class="card h-100 border-0 rounded-4 shadow-lg p-4 certificate-card transition">
+        
+        {% if cert.issuer_logo %}
+        <div class="text-center mb-3">
+          <img src="{{ cert.issuer_logo.url }}" alt="{{ cert.issuer }}" class="issuer-logo rounded-circle shadow-sm">
+        </div>
+        {% endif %}
+        
+        <div class="card-body d-flex flex-column">
+          <h5 class="fw-bold text-dark mb-2">
+            <i class="fas fa-certificate text-primary me-2"></i>{{ cert.name }}
+          </h5>
 
-<!-- Custom Modal -->
-<div id="customCertModal" class="custom-modal">
-  <div class="custom-modal-content">
-    <span class="custom-modal-close" id="customModalClose">&times;</span>
-    <h5 class="custom-modal-title" id="customModalTitle">Certification View</h5>
-    <div class="custom-modal-img-wrap">
-      <img id="customModalImage" src="" alt="Certification" class="custom-modal-img" />
+          {% if cert.issuer %}
+          <p class="text-muted mb-1">
+            <i class="fas fa-university me-1"></i>{{ cert.issuer }}
+          </p>
+          {% endif %}
+
+          {% if cert.issue_date_month or cert.issue_date_year %}
+          <p class="text-secondary small mb-1">
+            <i class="fas fa-calendar-alt me-1"></i>
+            Issued: {% if cert.issue_date_month %}{{ cert.issue_date_month }}{% endif %}{% if cert.issue_date_year %} {{ cert.issue_date_year }}{% endif %}
+          </p>
+          {% endif %}
+
+          {% if cert.expiration_date_month or cert.expiration_date_year %}
+          <p class="text-secondary small mb-1">
+            <i class="fas fa-hourglass-end me-1"></i>
+            Expires: {% if cert.expiration_date_month %}{{ cert.expiration_date_month }}{% endif %}{% if cert.expiration_date_year %} {{ cert.expiration_date_year }}{% endif %}
+          </p>
+          {% endif %}
+
+          {% if cert.credential_id %}
+          <p class="text-secondary small mb-1">
+            <i class="fas fa-id-card me-1"></i>ID: {{ cert.credential_id }}
+          </p>
+          {% endif %}
+
+          {% if cert.credential_url %}
+          <a href="{{ cert.credential_url }}" target="_blank"
+             class="btn btn-sm btn-outline-primary mt-3 align-self-start">
+            <i class="fas fa-external-link-alt me-1"></i> View Credential
+          </a>
+          {% endif %}
+          
+        </div>
+      </div>
     </div>
+    {% endfor %}
   </div>
 </div>
 
 <style>
-/* Modal & Card Styles */
-.custom-modal {
-  display: none;
-  position: fixed;
-  z-index: 3000;
-  left: 0; top: 0;
-  width: 100vw; height: 100vh;
-  background: rgba(25, 32, 48, 0.88);
-  justify-content: center;
-  align-items: center;
-}
-.custom-modal.show { display: flex; animation: fadeInModal 0.3s ease; }
-@keyframes fadeInModal { from { opacity: 0; } to { opacity: 1; } }
-.custom-modal-content {
-  background: #fff;
-  border-radius: 20px;
-  padding: 30px 20px;
-  max-width: 800px;
-  width: 95%;
-  text-align: center;
-  animation: popIn 0.3s ease-in-out;
-}
-@keyframes popIn { from { transform: scale(0.95); opacity: 0.5; } to { transform: scale(1); opacity: 1; } }
-.custom-modal-close {
-  position: absolute;
-  top: 12px; right: 20px;
-  font-size: 2rem;
-  color: #333;
-  cursor: pointer;
-}
-.custom-modal-close:hover { color: #e63946; }
-.custom-modal-img-wrap { display: flex; justify-content: center; align-items: center; min-height: 60vh; }
-.custom-modal-img {
-  max-width: 100%;
-  max-height: 65vh;
-  border-radius: 12px;
-  box-shadow: 0 0 12px rgba(0,0,0,0.15);
+.certificate-card {
+    background: #fff;
+    border-radius: 20px;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    position: relative;
 }
 .certificate-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-  transition: all 0.3s ease;
+    transform: translateY(-10px);
+    box-shadow: 0 15px 30px rgba(0,0,0,0.25);
+}
+.issuer-logo {
+    width: 60px;
+    height: 60px;
+    object-fit: cover;
+}
+.certificate-card i {
+    vertical-align: middle;
+}
+@media (max-width: 768px) {
+    .certificate-card { padding: 20px; }
 }
 </style>
-
-<script src="https://platform.linkedin.com/badges/js/profile.js" async defer></script>
-<script>
-document.addEventListener("DOMContentLoaded", function () {
-  const modal = document.getElementById('customCertModal');
-  const modalImg = document.getElementById('customModalImage');
-  const modalTitle = document.getElementById('customModalTitle');
-  const modalClose = document.getElementById('customModalClose');
-  const container = document.getElementById('linkedinCertsContainer');
-
-  // LinkedIn badge data
-  const linkedinCerts = [
-    { vanity: "chinnakotla-sree-harsha-85502620b" }
-  ];
-
-  // Create card for each LinkedIn badge
-  linkedinCerts.forEach(cert => {
-    const col = document.createElement("div");
-    col.className = "col";
-    col.innerHTML = `
-      <div class="card h-100 border-0 rounded-4 shadow certificate-card d-flex align-items-center justify-content-center p-3" style="height: 180px;">
-        <div class="badge-base LI-profile-badge" 
-             data-locale="en_US" 
-             data-size="medium" 
-             data-theme="light" 
-             data-type="VERTICAL" 
-             data-vanity="${cert.vanity}" 
-             data-version="v1">
-        </div>
-      </div>
-    `;
-    container.appendChild(col);
-  });
-
-  // Modal handling (optional if you want click-to-view larger badges)
-  function closeModal() {
-    modal.classList.remove('show');
-    document.body.classList.remove('modal-open-custom');
-    setTimeout(() => {
-      modalImg.src = "";
-      modalTitle.textContent = "Certification View";
-    }, 200);
-  }
-
-  modalClose.addEventListener('click', closeModal);
-  modal.addEventListener('click', e => { if (e.target === modal) closeModal(); });
-  document.addEventListener('keydown', e => {
-    if (modal.classList.contains('show') && e.key === "Escape") closeModal();
-  });
-});
-</script>
-
 
 {% endblock %}

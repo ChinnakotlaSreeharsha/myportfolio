@@ -4,10 +4,15 @@ from django.core.mail import send_mail
 from django.conf import settings
 from .forms import ContactForm
 from .models import Skill
+from .models import Profile, Certification
 
 def home(request):
     profile = Profile.objects.first()
-    return render(request, 'main/home.html', {'profile': profile})
+    certifications_count = Certification.objects.count()
+    return render(request, 'main/home.html', {
+        'profile': profile,
+        'certifications_count': certifications_count
+    })
 
 def about(request):
     profile = Profile.objects.first()
@@ -28,7 +33,6 @@ def skills(request):
         'current_category': category,
     })
 
-
 def projects(request):
     projects = Project.objects.all()
     return render(request, 'main/projects.html', {'projects': projects})
@@ -38,7 +42,26 @@ def experience(request):
     return render(request, 'main/experience.html', {'experiences': experiences})
 
 def certifications(request):
-    certs = Certification.objects.all()
+    # Convert month names to numbers for proper sorting
+    month_order = {
+        "January": 1, "February": 2, "March": 3, "April": 4,
+        "May": 5, "June": 6, "July": 7, "August": 8,
+        "September": 9, "October": 10, "November": 11, "December": 12
+    }
+
+    certs = list(Certification.objects.all())
+
+    # Add numeric month to each cert for sorting
+    for cert in certs:
+        cert.issue_month_num = month_order.get(cert.issue_date_month, 0)
+        cert.expiration_month_num = month_order.get(cert.expiration_date_month, 0)
+
+    # Sort: newest issued first
+    certs.sort(key=lambda c: (
+        int(c.issue_date_year) if c.issue_date_year else 0,
+        c.issue_month_num
+    ), reverse=True)
+
     return render(request, 'main/certifications.html', {'certs': certs})
 
 def resume(request):
@@ -85,4 +108,5 @@ def contact(request):
         'profile': profile,
         'success': success
     })
+
 
