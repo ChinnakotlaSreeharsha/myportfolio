@@ -41,28 +41,69 @@ def experience(request):
     experiences = Experience.objects.all().order_by('-start_date')
     return render(request, 'main/experience.html', {'experiences': experiences})
 
+from django.shortcuts import render
+from datetime import datetime
+from .models import Certification
+
 def certifications(request):
-    # Convert month names to numbers for proper sorting
     month_order = {
         "January": 1, "February": 2, "March": 3, "April": 4,
         "May": 5, "June": 6, "July": 7, "August": 8,
         "September": 9, "October": 10, "November": 11, "December": 12
     }
 
-    certs = list(Certification.objects.all())
+    certs = Certification.objects.all()
 
-    # Add numeric month to each cert for sorting
+    # Distinct years for dropdown
+    years = Certification.objects.values_list('issue_date_year', flat=True).distinct().order_by('-issue_date_year')
+
+    cert_list = []
+    now = datetime.now()
+
     for cert in certs:
-        cert.issue_month_num = month_order.get(cert.issue_date_month, 0)
-        cert.expiration_month_num = month_order.get(cert.expiration_date_month, 0)
+        # Numeric month conversion
+        issue_month_num = month_order.get(cert.issue_date_month, 0)
+        exp_month_num = month_order.get(cert.expiration_date_month, 0)
 
-    # Sort: newest issued first
-    certs.sort(key=lambda c: (
-        int(c.issue_date_year) if c.issue_date_year else 0,
-        c.issue_month_num
-    ), reverse=True)
+        # Issue date
+        issue_date = None
+        if cert.issue_date_year and cert.issue_date_month:
+            try:
+                issue_date = datetime(int(cert.issue_date_year), issue_month_num, 1)
+            except:
+                pass
 
-    return render(request, 'main/certifications.html', {'certs': certs})
+        # Expiration date
+        exp_date = None
+        if cert.expiration_date_year and cert.expiration_date_month:
+            try:
+                exp_date = datetime(int(cert.expiration_date_year), exp_month_num, 1)
+            except:
+                pass
+
+        # Badges
+        expired = exp_date < now if exp_date else False
+        new_cert = issue_date and (now - issue_date).days <= 90
+        expiring_soon = exp_date and 0 <= (exp_date - now).days <= 60
+
+        cert_list.append({
+            'cert': cert,
+            'expired': expired,
+            'new_cert': new_cert,
+            'expiring_soon': expiring_soon,
+            'issue_date': issue_date,
+            'exp_date': exp_date,
+            'issue_month_num': issue_month_num
+        })
+
+    # Sort newest issued first
+    cert_list.sort(key=lambda x: (int(x['cert'].issue_date_year or 0), x['issue_month_num']), reverse=True)
+
+    return render(request, 'main/certifications.html', {
+        'cert_list': cert_list,
+        'years': years
+    })
+
 
 def resume(request):
     profile = Profile.objects.first()
@@ -108,5 +149,16 @@ def contact(request):
         'profile': profile,
         'success': success
     })
+
+from django.shortcuts import render
+from .models import Profile
+
+def about(request):
+    profile = Profile.objects.first()  # or filter for your profile
+    context = {
+        "profile": profile,
+        "education_list": profile.education_list.all()  # now it works
+    }
+    return render(request, "main/about.html", context)
 
 

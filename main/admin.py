@@ -1,8 +1,8 @@
 from django.contrib import admin
-from .models import Profile, Skill, Project, Certification, Experience, ContactMessage
+from .models import Profile, Skill, Project, Certification, Experience, ContactMessage, Education
 
 # Other models
-admin.site.register(Profile)
+# admin.site.register(Profile)
 
 @admin.register(Skill)
 class SkillAdmin(admin.ModelAdmin):
@@ -29,3 +29,13 @@ class CertificationAdmin(admin.ModelAdmin):
     )
     search_fields = ('name', 'issuer')
     list_filter = ('issuer', 'issue_date_year', 'expiration_date_year')
+
+
+class EducationInline(admin.TabularInline):
+    model = Education
+    extra = 1  # Show one empty form by default
+
+@admin.register(Profile)
+class ProfileAdmin(admin.ModelAdmin):
+    inlines = [EducationInline]
+    list_display = ['name', 'title', 'email']

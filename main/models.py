@@ -15,6 +15,20 @@ class Profile(models.Model):
     def __str__(self):
         return self.name
 
+
+class Education(models.Model):
+    profile = models.ForeignKey(Profile, on_delete=models.CASCADE, related_name="education_list")
+    degree = models.CharField(max_length=200)
+    institution = models.CharField(max_length=200)
+    start_year = models.PositiveIntegerField()
+    end_year = models.PositiveIntegerField(default=2025)
+    grade = models.CharField(max_length=20, blank=True, null=True)  # new field for GPA/percentage
+    details = models.TextField(blank=True, null=True)
+
+    def __str__(self):
+        return f"{self.degree} - {self.institution}"
+
+
 class Skill(models.Model):
     CATEGORY_CHOICES = [
         ('Python', 'Data'),
@@ -64,26 +78,29 @@ class Experience(models.Model):
     def __str__(self):
         return self.title
 
-from django.db import models
-
 class Certification(models.Model):
+    MONTH_CHOICES = [
+        ("January","January"),("February","February"),("March","March"),
+        ("April","April"),("May","May"),("June","June"),
+        ("July","July"),("August","August"),("September","September"),
+        ("October","October"),("November","November"),("December","December")
+    ]
+
     name = models.CharField(max_length=255)
     issuer = models.CharField(max_length=255, blank=True, null=True)
-    issue_date_month = models.CharField(max_length=20, blank=True, null=True)
-    issue_date_year = models.CharField(max_length=4, blank=True, null=True)
-    expiration_date_month = models.CharField(max_length=20, blank=True, null=True)
-    expiration_date_year = models.CharField(max_length=4, blank=True, null=True)
+    issue_date_month = models.CharField(max_length=20, choices=MONTH_CHOICES, blank=True, null=True)
+    issue_date_year = models.PositiveIntegerField(blank=True, null=True)
+    expiration_date_month = models.CharField(max_length=20, choices=MONTH_CHOICES, blank=True, null=True)
+    expiration_date_year = models.PositiveIntegerField(blank=True, null=True)
     credential_id = models.CharField(max_length=255, blank=True, null=True)
     credential_url = models.URLField(blank=True, null=True)
-    issuer_logo = models.ImageField(upload_to="cert_logos/", blank=True, null=True)  # optional logo
+    issuer_logo = models.ImageField(upload_to="cert_logos/", blank=True, null=True)
 
     class Meta:
         ordering = ['-issue_date_year', '-issue_date_month']
 
     def __str__(self):
         return f"{self.name} ({self.issuer})" if self.issuer else self.name
-
-
 
 class ContactMessage(models.Model):
     name = models.CharField(max_length=100)
@@ -94,4 +111,3 @@ class ContactMessage(models.Model):
 
     def __str__(self):
         return f"{self.name} - {self.subject}"
-

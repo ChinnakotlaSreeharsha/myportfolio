@@ -1,12 +1,49 @@
 {% extends 'main/base.html' %}
 {% block content %}
 
-<!-- 🚀 My Skills Section -->
-<section class="container py-5" data-aos="fade-up">
-  <h2 class="text-center mb-4 display-5 fw-bold">
-    <i class="fas fa-tools me-2 text-primary" data-bs-toggle="tooltip" title="Explore Skills by Category"></i> My Skills
-  </h2>
+<!-- 🚀 Skills Hero Section with Lottie -->
+<section class="position-relative overflow-hidden py-5">
 
+  <!-- Floating Lottie Background -->
+  <lottie-player
+    id="skills-bg-lottie"
+    src="https://assets7.lottiefiles.com/packages/lf20_u4yrau.json"
+    background="transparent"
+    speed="0.5"
+    style="position:absolute; top:0; left:0; width:100%; height:100%; opacity:0.05; pointer-events:none; overflow:hidden;"
+    loop
+    autoplay>
+  </lottie-player>
+
+  <div class="container position-relative">
+    <div class="row align-items-center justify-content-center">
+
+      <!-- Lottie Animation (left) -->
+      <div class="col-md-5 mb-4 mb-md-0 text-center" data-aos="fade-right">
+        <lottie-player 
+            src="https://assets3.lottiefiles.com/packages/lf20_svy4ivvy.json"
+            background="transparent"  
+            speed="1"  
+            style="width: 100%; max-width: 350px; margin: auto;"  
+            loop  
+            autoplay>
+        </lottie-player>
+      </div>
+
+      <!-- Intro Text (right) -->
+      <div class="col-md-7 text-center text-md-start" data-aos="fade-left">
+        <h2 class="display-5 fw-bold mb-3">My Skills & Expertise</h2>
+        <p class="lead text-muted">
+          I have a diverse set of skills across programming, data science, and web technologies. Explore my proficiency levels below to see where I excel.
+        </p>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- 🎯 Skills Grid Section -->
+<section class="container py-5" data-aos="fade-up">
   <!-- 🔄 Filter by Category -->
   <div class="text-center mb-4">
     <form method="get" class="d-inline-block">
@@ -19,11 +56,14 @@
     </form>
   </div>
 
-  <!-- 🎯 Skill Cards -->
+  <!-- Skill Cards -->
   <div class="row g-4">
     {% for skill in skills %}
-      <div class="col-md-6 col-lg-4" data-aos="zoom-in-up" data-aos-delay="{{ forloop.counter0|add:"1" }}00">
-        <div class="card skill-card shadow border-0 rounded-4 h-100">
+      <div class="col-12 col-md-6 col-lg-4 col-xl-3" data-aos="zoom-in-up" data-aos-delay="{{ forloop.counter0|add:"1" }}00">
+        <div class="card skill-card shadow border-0 rounded-4 h-100 position-relative overflow-hidden">
+          <!-- Hover sparkle -->
+          <div class="skill-sparkle"></div>
+
           <div class="card-body p-4">
             <div class="d-flex justify-content-between align-items-center mb-3">
               <h5 class="mb-0">
@@ -33,10 +73,10 @@
             </div>
 
             <div class="progress rounded-pill" style="height: 10px;">
-              <div class="progress-bar progress-bar-striped progress-bar-animated bg-skill-bar"
+              <div class="progress-bar progress-bar-striped progress-bar-animated-on-hover bg-skill-bar"
                    role="progressbar"
-                   style="width: {{ skill.proficiency }}%;"
-                   aria-valuenow="{{ skill.proficiency }}"
+                   data-proficiency="{{ skill.proficiency }}"
+                   style="width: 0;"
                    aria-valuemin="0"
                    aria-valuemax="100"></div>
             </div>
@@ -53,40 +93,89 @@
 
 <!-- 🖌️ Custom Styles -->
 <style>
-  .skill-card {
-    background: rgba(255, 255, 255, 0.95);
-    transition: all 0.3s ease;
-    border-radius: 1.5rem;
-  }
+html, body {
+  overflow-x: hidden !important; /* 🚫 Prevent horizontal scroll */
+}
 
-  .skill-card:hover {
-    transform: translateY(-6px);
-    box-shadow: 0 10px 24px rgba(0, 0, 0, 0.1);
-  }
+.skill-card {
+  background: rgba(255, 255, 255, 0.95);
+  transition: all 0.3s ease;
+  border-radius: 1.5rem;
+}
 
-  .bg-skill {
-    background: linear-gradient(135deg, #00f2fe, #4facfe);
-    color: #fff;
-    font-size: 0.85rem;
-    padding: 0.4rem 0.7rem;
-    border-radius: 0.75rem;
-  }
+.skill-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 12px 30px rgba(0, 123, 255, 0.15);
+}
 
-  .bg-skill-bar {
-    background: linear-gradient(90deg, #00f2fe, #4facfe);
-  }
+/* Hover sparkle effect */
+.skill-sparkle::before,
+.skill-sparkle::after {
+  content: '✨';
+  position: absolute;
+  font-size: 1rem;
+  opacity: 0;
+  transition: all 0.3s ease;
+}
 
-  select.form-select {
-    min-width: 180px;
-    font-weight: 500;
-    font-size: 0.95rem;
-  }
+.skill-card:hover .skill-sparkle::before,
+.skill-card:hover .skill-sparkle::after {
+  opacity: 0.5;
+  animation: sparkle 1.2s infinite;
+}
+
+@keyframes sparkle {
+  0% {transform: translate(0,0) scale(0.8);}
+  50% {transform: translate(20px,-20px) scale(1);}
+  100% {transform: translate(-10px,10px) scale(0.8);}
+}
+
+.bg-skill {
+  background: linear-gradient(135deg, #00f2fe, #4facfe);
+  color: #fff;
+  font-size: 0.85rem;
+  padding: 0.4rem 0.7rem;
+  border-radius: 0.75rem;
+}
+
+.bg-skill-bar {
+  background: linear-gradient(90deg, #00f2fe, #4facfe);
+}
+
+select.form-select {
+  min-width: 180px;
+  font-weight: 500;
+  font-size: 0.95rem;
+}
 </style>
 
 <!-- 🧠 Tooltip Activation -->
 <script>
-  const tooltips = document.querySelectorAll('[data-bs-toggle="tooltip"]');
-  tooltips.forEach(t => new bootstrap.Tooltip(t));
+const tooltips = document.querySelectorAll('[data-bs-toggle="tooltip"]');
+tooltips.forEach(t => new bootstrap.Tooltip(t));
 </script>
+
+<!-- 🔄 Animate Progress Bars on Hover & Parallax -->
+<script>
+document.querySelectorAll('.skill-card').forEach(card => {
+  card.addEventListener('mouseenter', () => {
+    const bar = card.querySelector('.progress-bar-animated-on-hover');
+    bar.style.width = bar.dataset.proficiency + '%';
+  });
+  card.addEventListener('mouseleave', () => {
+    const bar = card.querySelector('.progress-bar-animated-on-hover');
+    bar.style.width = '0';
+  });
+});
+
+document.addEventListener('scroll', () => {
+  const bg = document.getElementById('skills-bg-lottie');
+  const scrolled = window.scrollY;
+  bg.style.transform = `translateY(${scrolled * 0.2}px)`;
+});
+</script>
+
+<!-- 🔹 Lottie Player Script -->
+<script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
 
 {% endblock %}

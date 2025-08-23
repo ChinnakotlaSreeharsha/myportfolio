@@ -2,30 +2,61 @@
 {% block content %}
 
 <div class="container py-5">
-  <h2 class="mb-5 text-center fw-bold display-5">
+  <h2 class="mb-3 text-center fw-bold display-5">
     <i class="fas fa-award text-warning me-2"></i> Certified & Credible
   </h2>
 
-  <div class="row g-4">
-    {% for cert in certs %}
-    <div class="col-xl-3 col-lg-4 col-md-6 col-sm-12">
-      <div class="card h-100 border-0 rounded-4 shadow-lg p-4 certificate-card transition">
-        
+  <!-- Badge Legend -->
+  <div class="row mb-4 text-center">
+      <div class="col"><span class="badge bg-success legend-badge">New</span> - Issued in last 3 months</div>
+      <div class="col"><span class="badge bg-warning text-dark legend-badge">Expiring Soon</span> - Expires in next 2 months</div>
+      <div class="col"><span class="badge bg-danger legend-badge">Expired</span> - Past expiration</div>
+  </div>
+
+  <!-- Filters -->
+  <div class="row mb-4 g-3">
+      <div class="col-md-5">
+          <input type="text" id="searchInput" class="form-control" placeholder="Search by certificate or issuer">
+      </div>
+      <div class="col-md-3">
+          <select id="yearFilter" class="form-select">
+              <option value="">All Years</option>
+              {% for y in years %}
+              <option value="{{ y }}">{{ y }}</option>
+              {% endfor %}
+          </select>
+      </div>
+      <div class="col-md-4 d-flex align-items-center">
+          <div class="form-check">
+              <input class="form-check-input" type="checkbox" id="expiringCheck">
+              <label class="form-check-label" for="expiringCheck">Expiring Soon Only</label>
+          </div>
+      </div>
+  </div>
+
+  <!-- Certificates Grid -->
+  <div class="row g-4" id="certGrid">
+    {% for item in cert_list %}
+    {% with cert=item.cert %}
+    <div class="col-xl-3 col-lg-4 col-md-6 col-sm-12 cert-item d-flex"
+         data-name="{{ cert.name|lower }}"
+         data-issuer="{{ cert.issuer|default_if_none:''|lower }}"
+         data-year="{{ cert.issue_date_year|default_if_none:'' }}"
+         data-expiring="{{ item.expiring_soon }}">
+      <div class="card h-100 border-0 rounded-4 shadow-lg p-4 certificate-card {% if item.expired %}expired{% endif %}">
         {% if cert.issuer_logo %}
         <div class="text-center mb-3">
           <img src="{{ cert.issuer_logo.url }}" alt="{{ cert.issuer }}" class="issuer-logo rounded-circle shadow-sm">
         </div>
         {% endif %}
-        
-        <div class="card-body d-flex flex-column">
-          <h5 class="fw-bold text-dark mb-2">
+
+        <div class="card-body d-flex flex-column position-relative">
+          <h5 class="fw-bold text-dark mb-2 cert-name">
             <i class="fas fa-certificate text-primary me-2"></i>{{ cert.name }}
           </h5>
 
           {% if cert.issuer %}
-          <p class="text-muted mb-1">
-            <i class="fas fa-university me-1"></i>{{ cert.issuer }}
-          </p>
+          <p class="text-muted mb-1 cert-issuer"><i class="fas fa-university me-1"></i>{{ cert.issuer }}</p>
           {% endif %}
 
           {% if cert.issue_date_month or cert.issue_date_year %}
@@ -43,47 +74,132 @@
           {% endif %}
 
           {% if cert.credential_id %}
-          <p class="text-secondary small mb-1">
-            <i class="fas fa-id-card me-1"></i>ID: {{ cert.credential_id }}
-          </p>
+          <p class="text-secondary small mb-1"><i class="fas fa-id-card me-1"></i>ID: {{ cert.credential_id }}</p>
           {% endif %}
 
           {% if cert.credential_url %}
-          <a href="{{ cert.credential_url }}" target="_blank"
-             class="btn btn-sm btn-outline-primary mt-3 align-self-start">
+          <a href="{{ cert.credential_url }}" target="_blank" class="btn btn-sm btn-outline-primary mt-3 align-self-start">
             <i class="fas fa-external-link-alt me-1"></i> View Credential
           </a>
           {% endif %}
-          
+
+          <!-- Badges -->
+          <div class="position-absolute top-0 end-0 p-2">
+            {% if item.new_cert %}
+            <span class="badge bg-success badge-pop" data-bs-toggle="tooltip" title="Issued on {{ cert.issue_date_month }} {{ cert.issue_date_year }}">New</span>
+            {% endif %}
+            {% if item.expiring_soon %}
+            <span class="badge bg-warning text-dark badge-pop" data-bs-toggle="tooltip" title="Expires on {{ cert.expiration_date_month }} {{ cert.expiration_date_year }}">Expiring Soon</span>
+            {% endif %}
+            {% if item.expired %}
+            <span class="badge bg-danger badge-pop" data-bs-toggle="tooltip" title="Expired on {{ cert.expiration_date_month }} {{ cert.expiration_date_year }}">Expired</span>
+            {% endif %}
+          </div>
         </div>
       </div>
     </div>
+    {% endwith %}
     {% endfor %}
   </div>
 </div>
 
 <style>
+/* Card animations & styles */
+.cert-item {
+    transition: transform 0.4s ease, opacity 0.4s ease;
+    transform: scale(1);
+    opacity: 1;
+    display: flex;
+}
+.cert-item.hide {
+    transform: scale(0.8);
+    opacity: 0;
+    pointer-events: none;
+}
 .certificate-card {
     background: #fff;
     border-radius: 20px;
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    transition: transform 0.3s ease, box-shadow 0.3s ease, border 0.3s ease;
     position: relative;
 }
 .certificate-card:hover {
-    transform: translateY(-10px);
-    box-shadow: 0 15px 30px rgba(0,0,0,0.25);
+    transform: translateY(-10px) scale(1.02);
+    box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+    border: 2px solid #0d6efd; /* Hover glow */
 }
-.issuer-logo {
-    width: 60px;
-    height: 60px;
-    object-fit: cover;
+.issuer-logo { width: 60px; height: 60px; object-fit: cover; transition: transform 0.3s ease; }
+.certificate-card i { vertical-align: middle; }
+.certificate-card.expired { border: 2px solid #dc3545; background: #fff5f5; }
+.badge { font-size: 0.75rem; transition: transform 0.3s ease; }
+.badge-pop {
+    animation: pop 1s ease-in-out infinite alternate;
 }
-.certificate-card i {
-    vertical-align: middle;
-}
-@media (max-width: 768px) {
-    .certificate-card { padding: 20px; }
-}
+@keyframes pop { 0% { transform: scale(1); } 50% { transform: scale(1.2); } 100% { transform: scale(1); } }
+@keyframes pulse { 0% { transform: scale(1); opacity: 1; } 50% { transform: scale(1.2); opacity: 0.8; } 100% { transform: scale(1); opacity: 1; } }
+.certificate-card .badge.bg-success { animation: pulse 1.5s infinite; }
+.legend-badge { font-size: 0.85rem; padding: 0.5em 0.75em; }
+.highlight { background: #ffeaa7; }
+@media (max-width: 768px) { .certificate-card { padding: 20px; } }
 </style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  // Bootstrap tooltips
+  var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+  tooltipTriggerList.map(function (tooltipTriggerEl) { return new bootstrap.Tooltip(tooltipTriggerEl); });
+
+  const searchInput = document.getElementById('searchInput');
+  const yearFilter = document.getElementById('yearFilter');
+  const expiringCheck = document.getElementById('expiringCheck');
+  const certGrid = document.getElementById('certGrid');
+  const certs = Array.from(certGrid.querySelectorAll('.cert-item'));
+
+  function escapeRegExp(string) { return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); }
+
+  function highlightText(element, text) {
+      const regex = new RegExp(`(${escapeRegExp(text)})`, 'gi');
+      element.innerHTML = element.textContent.replace(regex, '<span class="highlight">$1</span>');
+  }
+
+  function filterCerts() {
+    const q = searchInput.value.toLowerCase();
+    const year = yearFilter.value;
+    const expOnly = expiringCheck.checked;
+
+    let delay = 0;
+    certs.forEach(cert => {
+        const nameEl = cert.querySelector('.cert-name');
+        const issuerEl = cert.querySelector('.cert-issuer');
+
+        const name = cert.dataset.name;
+        const issuer = cert.dataset.issuer;
+        const certYear = cert.dataset.year;
+        const expiring = cert.dataset.expiring === 'true';
+
+        const matchesSearch = name.includes(q) || issuer.includes(q);
+        const matchesYear = !year || certYear === year;
+        const matchesExp = !expOnly || expiring;
+
+        setTimeout(() => {
+            if (matchesSearch && matchesYear && matchesExp) cert.classList.remove('hide');
+            else cert.classList.add('hide');
+        }, delay);
+        delay += 50;
+
+        if (q && matchesSearch) {
+            highlightText(nameEl, q);
+            if(issuerEl) highlightText(issuerEl, q);
+        } else {
+            nameEl.innerHTML = nameEl.textContent;
+            if(issuerEl) issuerEl.innerHTML = issuerEl.textContent;
+        }
+    });
+  }
+
+  searchInput.addEventListener('input', filterCerts);
+  yearFilter.addEventListener('change', filterCerts);
+  expiringCheck.addEventListener('change', filterCerts);
+});
+</script>
 
 {% endblock %}

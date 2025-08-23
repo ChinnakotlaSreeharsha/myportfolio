@@ -1,49 +1,70 @@
 {% extends 'main/base.html' %}
 {% block content %}
 
-<!-- 🔹 About Hero Section -->
-<section class="container py-5">
-  <div class="row align-items-center justify-content-center">
+<!-- 🔹 About Hero Section with Floating Lottie Background & Particles -->
+<section class="position-relative overflow-hidden py-5">
 
-    <!-- Floating Profile Image with Glow -->
-    <div class="col-md-4 mb-4 mb-md-0 text-center" data-aos="fade-right">
-      <div class="profile-wrapper mx-auto">
-        <div class="glow-circle"></div>
-        <img src="{{ profile.profile_image.url }}"
-             alt="Profile Picture"
-             class="animated-profile shadow"
-             loading="lazy">
+  <!-- Floating Lottie Background (absolute with parallax) -->
+  <lottie-player
+    id="hero-bg-lottie"
+    src="https://assets4.lottiefiles.com/packages/lf20_touohxv0.json"
+    background="transparent"
+    speed="0.5"
+    style="position:absolute; top:-50px; left:-50px; width: 150%; height: 150%; opacity:0.1; pointer-events:none;"
+    loop
+    autoplay>
+  </lottie-player>
+
+  <!-- Floating Particle Icons -->
+  <div id="particle-container"></div>
+
+  <div class="container position-relative">
+    <div class="row align-items-center justify-content-center">
+
+      <!-- Lottie Animation (left) -->
+      <div class="col-md-5 mb-4 mb-md-0 text-center" data-aos="fade-right">
+        <lottie-player 
+            src="https://assets10.lottiefiles.com/packages/lf20_jcikwtux.json" 
+            background="transparent"  
+            speed="1"  
+            style="width: 100%; max-width: 350px; margin: auto;"  
+            loop  
+            autoplay>
+        </lottie-player>
       </div>
-    </div>
 
-    <!-- Bio -->
-    <div class="col-md-8 text-center text-md-start" data-aos="fade-left">
-      <h1 class="display-5 fw-bold mb-3 slide-in">
-        <i class="fas fa-user-circle text-primary me-2"></i> About Me
-      </h1>
-      <p class="lead text-muted fade-in">{{ profile.bio }}</p>
+      <!-- Bio Text (right) -->
+      <div class="col-md-7 text-center text-md-start" data-aos="fade-left">
+        <p class="lead text-muted fade-in">{{ profile.bio }}</p>
+        <div class="mt-4">
+          <a href="/contact/" class="btn btn-lg btn-outline-primary shadow-sm px-4 py-2 hover-glow">
+            <i class="fas fa-handshake me-2"></i> Let’s Connect
+          </a>
+        </div>
+      </div>
+
     </div>
   </div>
 </section>
 
 <!-- 🔹 Profile Details Section -->
-<section class="container py-4" data-aos="fade-up">
+<section class="container py-5" data-aos="fade-up">
   <div class="card shadow-sm border-0 p-4 rounded-4">
     <div class="card-body">
-      <h4 class="mb-4 fw-semibold text-center">
+      <h4 class="mb-4 fw-semibold text-center slide-in">
         <i class="fas fa-graduation-cap text-success me-2"></i> Background & Info
       </h4>
 
       <div class="row row-cols-1 row-cols-md-2 g-4">
         <div class="col">
-          <div class="d-flex align-items-center">
+          <div class="d-flex align-items-center hover-highlight p-2 rounded-3">
             <i class="fas fa-id-card text-secondary me-2"></i>
             <strong>Full Name:</strong> &nbsp; {{ profile.name }}
           </div>
         </div>
 
         <div class="col">
-          <div class="d-flex align-items-center">
+          <div class="d-flex align-items-center hover-highlight p-2 rounded-3">
             <i class="fas fa-briefcase text-secondary me-2"></i>
             <strong>Title:</strong> &nbsp; {{ profile.title }}
           </div>
@@ -51,7 +72,7 @@
 
         {% if profile.email %}
         <div class="col">
-          <div class="d-flex align-items-center">
+          <div class="d-flex align-items-center hover-highlight p-2 rounded-3">
             <i class="fas fa-envelope text-danger me-2"></i>
             <strong>Email:</strong> &nbsp;
             <a href="mailto:{{ profile.email }}" class="text-decoration-none text-dark">
@@ -63,7 +84,7 @@
 
         {% if profile.linkedin %}
         <div class="col">
-          <div class="d-flex align-items-center">
+          <div class="d-flex align-items-center hover-highlight p-2 rounded-3">
             <i class="fab fa-linkedin text-primary me-2"></i>
             <strong>LinkedIn:</strong> &nbsp;
             <a href="{{ profile.linkedin }}" target="_blank" class="text-decoration-none">
@@ -75,7 +96,7 @@
 
         {% if profile.github %}
         <div class="col">
-          <div class="d-flex align-items-center">
+          <div class="d-flex align-items-center hover-highlight p-2 rounded-3">
             <i class="fab fa-github text-dark me-2"></i>
             <strong>GitHub:</strong> &nbsp;
             <a href="{{ profile.github }}" target="_blank" class="text-decoration-none">
@@ -87,7 +108,7 @@
 
         {% if profile.credly %}
         <div class="col">
-          <div class="d-flex align-items-center">
+          <div class="d-flex align-items-center hover-highlight p-2 rounded-3">
             <i class="fas fa-award text-dark me-2"></i>
             <strong>Credly:</strong> &nbsp;
             <a href="{{ profile.credly }}" target="_blank" class="text-decoration-none">
@@ -96,96 +117,162 @@
           </div>
         </div>
         {% endif %}
-
-
-        {% comment %} {% if profile.resume %}
-        <div class="col">
-          <div class="d-flex align-items-center">
-            <i class="fas fa-file-alt text-info me-2"></i>
-            <strong>Resume:</strong> &nbsp;
-            <a href="{{ profile.resume.url }}" download class="ms-2">
-              <span class="badge bg-info text-dark p-2">
-                <i class="fas fa-file-pdf me-1"></i> Download CV
-              </span>
-            </a>
-          </div>
-        </div>
-        {% endif %} {% endcomment %}
       </div>
     </div>
   </div>
 </section>
 
-<!-- 🔹 Call-to-Action -->
-<section class="text-center mt-5" data-aos="zoom-in-up">
-  <h4 class="mb-3">🚀 Ready to build something amazing?</h4>
-  <a href="/contact/" class="btn btn-lg btn-outline-primary shadow-sm px-4 py-2">
-    <i class="fas fa-handshake me-2"></i> Let’s Connect
-  </a>
+<!-- 🔹 Education Section -->
+<section class="container py-4 position-relative" data-aos="fade-up">
+  <!-- Floating Education Lottie Background -->
+  <div id="edu-particle-container" class="position-absolute w-100 h-100" style="top:0; left:0; pointer-events:none; overflow:hidden;"></div>
+
+  <h4 class="mb-4 fw-semibold text-center slide-in position-relative" style="z-index:1;">
+    <i class="fas fa-graduation-cap text-success me-2"></i> Education
+  </h4>
+
+  <div class="row row-cols-1 row-cols-sm-2 row-cols-lg-3 g-4 position-relative" style="z-index:1;">
+    {% for edu in education_list %}
+    <div class="col">
+      <div class="card shadow-sm border-0 p-4 rounded-4 hover-highlight h-100 animate-card" style="animation-delay: {{ forloop.counter0|add:"0.1"|floatformat:1 }}s;">
+        <div class="card-body d-flex flex-column">
+          <h5 class="fw-bold mb-2">{{ edu.degree }}</h5>
+          <p class="mb-1 text-muted"><i class="fas fa-university me-2"></i>{{ edu.institution }}</p>
+          <p class="mb-0 text-secondary">
+            <i class="fas fa-calendar-alt me-2"></i>
+            {% if edu.start_year %}{{ edu.start_year }}{% endif %}
+            {% if edu.end_year %} - {{ edu.end_year }}{% endif %}
+          </p>
+          {% if edu.grade %}<p class="mt-1 text-muted">Grade: {{ edu.grade }}</p>{% endif %}
+          {% if edu.details %}<p class="mt-1 text-muted">{{ edu.details }}</p>{% endif %}
+        </div>
+      </div>
+    </div>
+    {% empty %}
+      <p class="text-center text-muted">No education details added yet.</p>
+    {% endfor %}
+  </div>
 </section>
+
+<!-- 🔹 Education Card Styles -->
+<style>
+.hover-highlight:hover { 
+  background: rgba(0, 123, 255, 0.05); 
+  transform: translateY(-5px) scale(1.02); 
+  transition: all 0.3s ease; 
+}
+.card { border-radius: 16px; transition: transform 0.3s ease, box-shadow 0.3s ease; }
+.card:hover { box-shadow: 0 15px 25px rgba(0,0,0,0.2); }
+.h-100 { height: 100%; }
+.animate-card { opacity: 0; transform: translateY(30px); animation: fadeInUp 0.8s forwards; }
+@keyframes fadeInUp { 0% { opacity: 0; transform: translateY(30px); } 100% { opacity: 1; transform: translateY(0); } }
+
+/* Floating Education Particle Icons */
+.edu-particle {
+  position:absolute;
+  width:40px;
+  height:40px;
+  opacity:0.15;
+  animation: floatEduParticle linear infinite;
+  pointer-events:none;
+}
+@keyframes floatEduParticle {
+  0% { transform: translateY(0) rotate(0deg); }
+  100% { transform: translateY(-200%) rotate(360deg); }
+}
+</style>
+
+<!-- 🔹 Floating Education Particles Script with Parallax -->
+<script>
+const eduParticleContainer = document.getElementById('edu-particle-container');
+const eduLottieFiles = [
+  'https://assets10.lottiefiles.com/packages/lf20_edu1.json', // graduation hat
+  'https://assets10.lottiefiles.com/packages/lf20_edu2.json', // book
+  'https://assets10.lottiefiles.com/packages/lf20_edu3.json'  // diploma
+];
+
+let eduParticles = [];
+
+for(let i=0;i<20;i++){
+  const lottieDiv = document.createElement('div');
+  lottieDiv.classList.add('edu-particle');
+  lottieDiv.style.left = Math.random() * 100 + '%';
+  lottieDiv.style.top = Math.random() * 100 + '%';
+  lottieDiv.style.width = (30 + Math.random()*30) + 'px';
+  lottieDiv.style.height = (30 + Math.random()*30) + 'px';
+  lottieDiv.style.animationDuration = (8 + Math.random()*10) + 's';
+
+  const lottiePlayer = document.createElement('lottie-player');
+  lottiePlayer.setAttribute('src', eduLottieFiles[Math.floor(Math.random()*eduLottieFiles.length)]);
+  lottiePlayer.setAttribute('background', 'transparent');
+  lottiePlayer.setAttribute('speed', '0.5');
+  lottiePlayer.setAttribute('loop', '');
+  lottiePlayer.setAttribute('autoplay', '');
+  lottiePlayer.style.width = '100%';
+  lottiePlayer.style.height = '100%';
+
+  lottieDiv.appendChild(lottiePlayer);
+  eduParticleContainer.appendChild(lottieDiv);
+  
+  // store initial top position for parallax
+  eduParticles.push({element: lottieDiv, initialTop: parseFloat(lottieDiv.style.top)});
+}
+
+// Parallax effect on scroll
+document.addEventListener('scroll', () => {
+  const scrollY = window.scrollY;
+  eduParticles.forEach((p, idx) => {
+    // subtle movement: slower particles for smaller indexes
+    const factor = 0.05 + (idx % 5) * 0.02;
+    p.element.style.transform = `translateY(${scrollY * factor}px)`;
+  });
+});
+</script>
+
 
 <!-- 🔹 Page Styles -->
 <style>
-  .profile-wrapper {
-    position: relative;
-    width: 100%;
-    max-width: 300px;
-    border-radius: 50% / 30%;
-    overflow: hidden;
-    animation: float 6s ease-in-out infinite;
-  }
+.slide-in { animation: slideInLeft 1s ease forwards; }
+.fade-in { animation: fadeInUp 1.2s ease forwards; }
+@keyframes slideInLeft { 0% { opacity: 0; transform: translateX(-30px); } 100% { opacity: 1; transform: translateX(0); } }
+@keyframes fadeInUp { 0% { opacity: 0; transform: translateY(30px); } 100% { opacity: 1; transform: translateY(0); } }
 
-  .animated-profile {
-    width: 100%;
-    height: auto;
-    border-radius: 50% / 30%;
-    object-fit: cover;
-    z-index: 2;
-    position: relative;
-    transition: transform 0.5s ease-in-out;
-  }
+.hover-highlight:hover { background: rgba(0, 123, 255, 0.05); transition: all 0.3s ease; }
+.hover-glow:hover { box-shadow: 0 0 20px rgba(0,123,255,0.5); transform: translateY(-3px); transition: all 0.3s ease; }
 
-  .glow-circle {
-    position: absolute;
-    top: -15%;
-    left: -15%;
-    width: 130%;
-    height: 130%;
-    background: radial-gradient(circle, rgba(0, 123, 255, 0.25), transparent);
-    border-radius: 50% / 30%;
-    filter: blur(40px);
-    animation: glowPulse 3s infinite ease-in-out;
-    z-index: 1;
-  }
+.card { border-radius: 16px; transition: transform 0.3s ease, box-shadow 0.3s ease; }
+.card:hover { transform: translateY(-5px); box-shadow: 0 15px 25px rgba(0,0,0,0.2); }
 
-  @keyframes float {
-    0%, 100% { transform: translateY(0); }
-    50% { transform: translateY(-10px); }
-  }
+#particle-container { position: absolute; top:0; left:0; width:100%; height:100%; pointer-events:none; overflow:hidden; }
+.particle { position:absolute; font-size: 16px; opacity: 0.2; animation: floatParticle linear infinite; }
+@keyframes floatParticle { 0% { transform: translateY(0) rotate(0deg); } 100% { transform: translateY(-150%) rotate(360deg); } }
 
-  @keyframes glowPulse {
-    0% { opacity: 0.4; transform: scale(1); }
-    50% { opacity: 1; transform: scale(1.05); }
-    100% { opacity: 0.4; transform: scale(1); }
-  }
-
-  .slide-in {
-    animation: slideInLeft 1s ease forwards;
-  }
-
-  .fade-in {
-    animation: fadeInUp 1.2s ease forwards;
-  }
-
-  @keyframes slideInLeft {
-    0% { opacity: 0; transform: translateX(-30px); }
-    100% { opacity: 1; transform: translateX(0); }
-  }
-
-  @keyframes fadeInUp {
-    0% { opacity: 0; transform: translateY(30px); }
-    100% { opacity: 1; transform: translateY(0); }
-  }
+@media (max-width: 767px) { .col-md-5, .col-md-7 { text-align: center; margin-bottom: 1.5rem; } }
 </style>
+
+<!-- 🔹 Lottie Player Script -->
+<script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
+
+<!-- 🔹 Parallax & Particles Script -->
+<script>
+document.addEventListener('scroll', () => {
+  const bg = document.getElementById('hero-bg-lottie');
+  const scrolled = window.scrollY;
+  bg.style.transform = `translateY(${scrolled * 0.2}px)`;
+});
+
+const particleContainer = document.getElementById('particle-container');
+const icons = ['🌟','✨','💫','🎯','🚀'];
+for(let i=0;i<25;i++){
+  const p = document.createElement('div');
+  p.classList.add('particle');
+  p.style.left = Math.random() * 100 + '%';
+  p.style.top = Math.random() * 100 + '%';
+  p.style.fontSize = (10 + Math.random()*20) + 'px';
+  p.style.animationDuration = (5 + Math.random()*10) + 's';
+  p.textContent = icons[Math.floor(Math.random()*icons.length)];
+  particleContainer.appendChild(p);
+}
+</script>
 
 {% endblock %}
