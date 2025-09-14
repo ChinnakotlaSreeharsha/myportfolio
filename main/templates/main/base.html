@@ -1389,7 +1389,7 @@
 </head>
 
 <body>
-  <!-- Enhanced Welcome Popup with Visitor Counter (No Close Options) -->
+  <!-- Enhanced Welcome Popup - Only for Fresh Website Opens -->
   <div class="welcome-overlay" id="welcomeOverlay">
     <div class="welcome-popup" id="welcomePopup">
       <div class="welcome-sparkles">
@@ -1738,17 +1738,39 @@
       }, stepTime);
     }
 
-    // Enhanced Welcome Popup Functionality (No Close Options)
+    // Check if this is a fresh website session (not page navigation)
+    function isFreshWebsiteSession() {
+      // Use sessionStorage to track if popup has been shown in this browser session
+      const popupShownInSession = sessionStorage.getItem('welcomePopupShown');
+      
+      // If popup hasn't been shown in this session, it's a fresh website open
+      return !popupShownInSession;
+    }
+
+    // Mark popup as shown in current session
+    function markPopupAsShown() {
+      sessionStorage.setItem('welcomePopupShown', 'true');
+    }
+
+    // Enhanced Welcome Popup Functionality (Only for Fresh Website Opens)
     function showWelcomePopup() {
+      // Only show popup for fresh website sessions, not page navigation
+      if (!isFreshWebsiteSession()) {
+        return; // Don't show popup for page navigation
+      }
+      
       const overlay = document.getElementById('welcomeOverlay');
       const popup = document.getElementById('welcomePopup');
       
-      // Always show popup every time
+      // Show welcome popup for fresh website opens
       setTimeout(() => {
         overlay.classList.add('active');
         setTimeout(() => {
           popup.classList.add('animate');
         }, 100);
+        
+        // Mark popup as shown in this session
+        markPopupAsShown();
       }, 1000);
     }
 
@@ -1816,7 +1838,7 @@
         checkReturningVisitor();
         updateWelcomeForReturningVisitor();
         
-        // Show welcome popup after loader disappears
+        // Show welcome popup ONLY for fresh website opens (not page navigation)
         showWelcomePopup();
       }, 600);
     });
