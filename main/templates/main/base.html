@@ -126,7 +126,7 @@
       100% { transform: translate(10px, -10px) scale(1.01); }
     }
 
-    /* Enhanced Welcome Popup Styles */
+    /* Enhanced Welcome Popup Styles - NO CLOSE BUTTON */
     .welcome-overlay {
       position: fixed;
       top: 0;
@@ -340,12 +340,6 @@
       border: 2px solid transparent;
     }
 
-    .welcome-btn-secondary {
-      background: transparent;
-      color: var(--text-secondary);
-      border: 2px solid var(--border-primary);
-    }
-
     .welcome-btn::before {
       content: "";
       position: absolute;
@@ -368,13 +362,6 @@
     .welcome-btn:hover {
       transform: translateY(-4px) scale(1.05);
       box-shadow: 0 15px 40px rgba(6, 182, 212, 0.5);
-    }
-
-    .welcome-btn-secondary:hover {
-      background: var(--surface-secondary);
-      border-color: var(--accent-primary);
-      color: var(--accent-primary);
-      box-shadow: 0 8px 25px rgba(6, 182, 212, 0.3);
     }
 
     /* Let's Go Button - Special Styling */
@@ -1389,7 +1376,9 @@
 </head>
 
 <body>
-  <!-- Enhanced Welcome Popup - Only for Fresh Website Opens -->
+  {% csrf_token %}
+
+  <!-- Enhanced Welcome Popup - NO CLOSE BUTTON -->
   <div class="welcome-overlay" id="welcomeOverlay">
     <div class="welcome-popup" id="welcomePopup">
       <div class="welcome-sparkles">
@@ -1400,6 +1389,8 @@
         <div class="sparkle">⭐</div>
         <div class="sparkle">🎉</div>
       </div>
+      
+      <!-- REMOVED CLOSE BUTTON -->
       
       <!-- Initial Welcome State -->
       <div id="welcomeContent">
@@ -1584,7 +1575,7 @@
           </button>
         </div>
 
-        <!-- FOLLOW ME SECTION - Fixed Dynamic Icons -->
+        <!-- Follow Me Section -->
         <div class="footer-section">
           <h6>Follow Me</h6>
           <div class="social-links">
@@ -1650,206 +1641,204 @@
     let currentVisitorCount = 0;
     let isReturningVisitor = false;
 
-    // Genuine visitor counter starting from 0
-    async function updateVisitorCount() {
-      try {
-        // REPLACE THIS WITH YOUR ACTUAL BACKEND API CALL
-        // Example API call:
-        // const response = await fetch('/api/visitors/', {
-        //   method: 'POST',
-        //   headers: {
-        //     'Content-Type': 'application/json',
-        //     'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
-        //   },
-        //   body: JSON.stringify({
-        //     action: 'increment',
-        //     timestamp: new Date().toISOString(),
-        //     user_agent: navigator.userAgent,
-        //     referrer: document.referrer
-        //   })
-        // });
-        // const data = await response.json();
-        // return data.visitor_count;
-
-        // Genuine visitor count starting from 0 - properly persistent
-        let storedCount = localStorage.getItem('portfolioVisitorCount');
-        
-        if (storedCount === null) {
-          // First time visitor - start from 1
-          currentVisitorCount = 1;
-        } else {
-          // Increment the existing count
-          currentVisitorCount = parseInt(storedCount) + 1;
-        }
-        
-        // Save the updated count
-        localStorage.setItem('portfolioVisitorCount', currentVisitorCount.toString());
-        
-        return currentVisitorCount;
-      } catch (error) {
-        console.error('Error updating visitor count:', error);
-        // Fallback: start from 1 if error occurs
-        return 1;
-      }
+    // Get CSRF token for Django requests
+    function getCSRFToken() {
+        return document.querySelector('[name=csrfmiddlewaretoken]')?.value || '';
     }
 
-    // Check if returning visitor
-    function checkReturningVisitor() {
-      const lastVisit = localStorage.getItem('lastVisitDate');
-      const today = new Date().toDateString();
-      
-      if (lastVisit && lastVisit !== today) {
-        isReturningVisitor = true;
-      }
-      
-      localStorage.setItem('lastVisitDate', today);
-      return isReturningVisitor;
+    // Real database visitor counter - COUNTS ALL VISITORS (NEW + RETURNING)
+    async function updateVisitorCount() {
+        try {
+            const response = await fetch('/api/visitors/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': getCSRFToken(),
+                    'X-Requested-With': 'XMLHttpRequest'
+                },
+                body: JSON.stringify({
+                    action: 'increment',
+                    timestamp: new Date().toISOString(),
+                    user_agent: navigator.userAgent,
+                    referrer: document.referrer,
+                    page_url: window.location.href,
+                    page_title: document.title
+                })
+            });
+
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+
+            const data = await response.json();
+            
+            if (data.status === 'success') {
+                currentVisitorCount = data.visitor_count;
+                isReturningVisitor = data.is_returning;
+                
+                // Update welcome message for returning visitors
+                if (isReturningVisitor) {
+                    updateWelcomeForReturningVisitor();
+                }
+                
+                return currentVisitorCount;
+            } else {
+                throw new Error(data.message || 'Failed to update visitor count');
+            }
+            
+        } catch (error) {
+            console.error('Error updating visitor count:', error);
+            
+            // Fallback to localStorage for development/offline mode
+            const storedCount = localStorage.getItem('portfolioVisitorCount');
+            if (storedCount === null) {
+                currentVisitorCount = 1;
+            } else {
+                currentVisitorCount = parseInt(storedCount) + 1;
+            }
+            localStorage.setItem('portfolioVisitorCount', currentVisitorCount.toString());
+            
+            return currentVisitorCount;
+        }
     }
 
     // Update welcome messages for returning visitors
     function updateWelcomeForReturningVisitor() {
-      if (isReturningVisitor) {
-        document.getElementById('welcomeIcon').textContent = '🤗';
-        document.getElementById('welcomeTitle').textContent = 'Welcome Back!';
-        document.getElementById('welcomeSubtitle').textContent = 'Thanks for coming again! Great to see you here.';
-        document.getElementById('welcomeMessage').textContent = 'I hope you found something interesting last time. There might be new projects and updates waiting for you. Let\'s continue the journey together!';
-        document.getElementById('specialMessage').textContent = 'Thanks for being an amazing returning visitor! 🌟';
-      }
+        if (isReturningVisitor) {
+            document.getElementById('welcomeIcon').textContent = '🤗';
+            document.getElementById('welcomeTitle').textContent = 'Welcome Back!';
+            document.getElementById('welcomeSubtitle').textContent = 'Thanks for coming again! Great to see you here.';
+            document.getElementById('welcomeMessage').textContent = 'I hope you found something interesting last time. There might be new projects and updates waiting for you. Let\'s continue the journey together!';
+            document.getElementById('specialMessage').textContent = 'Thanks for being an amazing returning visitor! 🌟';
+        }
     }
 
     // Animate visitor counter with precise timing
     function animateVisitorCounter(targetCount) {
-      const counterElement = document.getElementById('visitorNumber');
-      const finalCounterElement = document.getElementById('finalVisitorNumber');
-      let current = 0;
-      const increment = targetCount / 60; // 60 steps for smoother animation
-      const duration = 2000; // 2 seconds
-      const stepTime = duration / 60;
-      
-      const timer = setInterval(() => {
-        current += increment;
-        if (current >= targetCount) {
-          current = targetCount;
-          clearInterval(timer);
-        }
-        const displayCount = Math.floor(current);
-        counterElement.textContent = displayCount.toLocaleString();
-        finalCounterElement.textContent = displayCount.toLocaleString();
-      }, stepTime);
+        const counterElement = document.getElementById('visitorNumber');
+        const finalCounterElement = document.getElementById('finalVisitorNumber');
+        let current = 0;
+        const increment = targetCount / 60; // 60 steps for smoother animation
+        const duration = 2000; // 2 seconds
+        const stepTime = duration / 60;
+        
+        const timer = setInterval(() => {
+            current += increment;
+            if (current >= targetCount) {
+                current = targetCount;
+                clearInterval(timer);
+            }
+            const displayCount = Math.floor(current);
+            counterElement.textContent = displayCount.toLocaleString();
+            finalCounterElement.textContent = displayCount.toLocaleString();
+        }, stepTime);
     }
 
     // Check if this is a fresh website session (not page navigation)
     function isFreshWebsiteSession() {
-      // Use sessionStorage to track if popup has been shown in this browser session
-      const popupShownInSession = sessionStorage.getItem('welcomePopupShown');
-      
-      // If popup hasn't been shown in this session, it's a fresh website open
-      return !popupShownInSession;
+        const popupShownInSession = sessionStorage.getItem('welcomePopupShown');
+        return !popupShownInSession;
     }
 
     // Mark popup as shown in current session
     function markPopupAsShown() {
-      sessionStorage.setItem('welcomePopupShown', 'true');
+        sessionStorage.setItem('welcomePopupShown', 'true');
     }
 
     // Enhanced Welcome Popup Functionality (Only for Fresh Website Opens)
     function showWelcomePopup() {
-      // Only show popup for fresh website sessions, not page navigation
-      if (!isFreshWebsiteSession()) {
-        return; // Don't show popup for page navigation
-      }
-      
-      const overlay = document.getElementById('welcomeOverlay');
-      const popup = document.getElementById('welcomePopup');
-      
-      // Show welcome popup for fresh website opens
-      setTimeout(() => {
-        overlay.classList.add('active');
-        setTimeout(() => {
-          popup.classList.add('animate');
-        }, 100);
+        if (!isFreshWebsiteSession()) {
+            return; // Don't show popup for page navigation
+        }
         
-        // Mark popup as shown in this session
-        markPopupAsShown();
-      }, 1000);
+        const overlay = document.getElementById('welcomeOverlay');
+        const popup = document.getElementById('welcomePopup');
+        
+        setTimeout(() => {
+            overlay.classList.add('active');
+            setTimeout(() => {
+                popup.classList.add('animate');
+            }, 100);
+            
+            markPopupAsShown();
+        }, 1000);
     }
 
     function hideWelcomePopup() {
-      const overlay = document.getElementById('welcomeOverlay');
-      const popup = document.getElementById('welcomePopup');
-      
-      popup.classList.remove('animate');
-      setTimeout(() => {
-        overlay.classList.remove('active');
-      }, 300);
+        const overlay = document.getElementById('welcomeOverlay');
+        const popup = document.getElementById('welcomePopup');
+        
+        popup.classList.remove('animate');
+        setTimeout(() => {
+            overlay.classList.remove('active');
+        }, 300);
     }
 
-    // Handle "Let's Go" button click
+    // Handle "Let's Go" button click - COUNTS ALL VISITORS
     async function handleLetsGoClick() {
-      const letsGoBtn = document.getElementById('letsGoBtn');
-      const visitorCounter = document.getElementById('visitorCounter');
-      const welcomeContent = document.getElementById('welcomeContent');
-      const thankYouContent = document.getElementById('thankYouContent');
-      
-      // Disable button and show loading state
-      letsGoBtn.disabled = true;
-      letsGoBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> <span>Counting...</span>';
-      
-      try {
-        // Update visitor count in database/storage
-        const visitorCount = await updateVisitorCount();
+        const letsGoBtn = document.getElementById('letsGoBtn');
+        const visitorCounter = document.getElementById('visitorCounter');
+        const welcomeContent = document.getElementById('welcomeContent');
+        const thankYouContent = document.getElementById('thankYouContent');
         
-        // Show visitor counter with animation
-        visitorCounter.style.display = 'block';
-        animateVisitorCounter(visitorCount);
+        // Disable button and show loading state
+        letsGoBtn.disabled = true;
+        letsGoBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> <span>Loading...</span>';
         
-        // Wait for animation to complete
-        setTimeout(() => {
-          // Hide welcome content and show thank you state
-          welcomeContent.style.display = 'none';
-          thankYouContent.classList.add('active');
-          
-          // Auto-hide popup after showing thank you message
-          setTimeout(() => {
-            hideWelcomePopup();
-          }, 3000);
-        }, 2500);
-        
-      } catch (error) {
-        console.error('Error handling lets go click:', error);
-        // Fallback behavior
-        letsGoBtn.innerHTML = '<i class="fas fa-rocket"></i> <span>Let\'s Go!</span>';
-        letsGoBtn.disabled = false;
-      }
+        try {
+            // Update visitor count in database - ALL visitors increment the counter!
+            const visitorCount = await updateVisitorCount();
+            
+            // Show visitor counter with animation
+            visitorCounter.style.display = 'block';
+            animateVisitorCounter(visitorCount);
+            
+            // Wait for animation to complete
+            setTimeout(() => {
+                // Hide welcome content and show thank you state
+                welcomeContent.style.display = 'none';
+                thankYouContent.classList.add('active');
+                
+                // Auto-hide popup after showing thank you message
+                setTimeout(() => {
+                    hideWelcomePopup();
+                }, 3000);
+            }, 2500);
+            
+        } catch (error) {
+            console.error('Error handling lets go click:', error);
+            // Fallback behavior
+            letsGoBtn.innerHTML = '<i class="fas fa-rocket"></i> <span>Let\'s Go!</span>';
+            letsGoBtn.disabled = false;
+        }
     }
+
+    // REMOVED CLOSE BUTTON EVENT LISTENERS
 
     // Let's Go button click handler (ONLY way to proceed)
     document.getElementById('letsGoBtn').addEventListener('click', handleLetsGoClick);
 
     // Page loader and initialization
     window.addEventListener('load', function() {
-      const loader = document.getElementById('pageLoader');
-      loader.classList.add('hidden');
-      
-      setTimeout(() => {
-        loader.style.display = 'none';
-        
-        // Check if returning visitor and update messages
-        checkReturningVisitor();
-        updateWelcomeForReturningVisitor();
+        const loader = document.getElementById('pageLoader');
+        if (loader) {
+            loader.classList.add('hidden');
+            setTimeout(() => {
+                loader.style.display = 'none';
+            }, 600);
+        }
         
         // Show welcome popup ONLY for fresh website opens (not page navigation)
         showWelcomePopup();
-      }, 600);
     });
 
     // Initialize AOS with enhanced settings
     AOS.init({
-      duration: 800,
-      easing: 'ease-out-cubic',
-      once: true,
-      offset: 100,
-      delay: 100
+        duration: 800,
+        easing: 'ease-out-cubic',
+        once: true,
+        offset: 100,
+        delay: 100
     });
 
     // Enhanced Navbar Scroll Effect
@@ -1857,19 +1846,19 @@
     const navLinks = document.querySelectorAll('.enhanced-nav-link');
     
     function updateNavbarOnScroll() {
-      const scrolled = window.scrollY > 20;
-      navbar.classList.toggle('scrolled', scrolled);
+        const scrolled = window.scrollY > 20;
+        navbar.classList.toggle('scrolled', scrolled);
     }
 
     window.addEventListener('scroll', updateNavbarOnScroll);
 
     // Active Nav Link Detection
     function updateActiveNavLink() {
-      const currentPath = window.location.pathname;
-      navLinks.forEach(link => {
-        const linkPath = new URL(link.href).pathname;
-        link.classList.toggle('active', linkPath === currentPath);
-      });
+        const currentPath = window.location.pathname;
+        navLinks.forEach(link => {
+            const linkPath = new URL(link.href).pathname;
+            link.classList.toggle('active', linkPath === currentPath);
+        });
     }
 
     updateActiveNavLink();
@@ -1879,46 +1868,46 @@
     const navMenu = document.getElementById('navMenu');
 
     mobileToggle.addEventListener('click', function() {
-      this.classList.toggle('active');
-      navMenu.classList.toggle('active');
-      
-      // Prevent body scroll when menu is open
-      document.body.style.overflow = navMenu.classList.contains('active') ? 'hidden' : '';
+        this.classList.toggle('active');
+        navMenu.classList.toggle('active');
+        
+        // Prevent body scroll when menu is open
+        document.body.style.overflow = navMenu.classList.contains('active') ? 'hidden' : '';
     });
 
     // Close mobile menu when clicking on links
     navLinks.forEach(link => {
-      link.addEventListener('click', () => {
-        mobileToggle.classList.remove('active');
-        navMenu.classList.remove('active');
-        document.body.style.overflow = '';
-      });
+        link.addEventListener('click', () => {
+            mobileToggle.classList.remove('active');
+            navMenu.classList.remove('active');
+            document.body.style.overflow = '';
+        });
     });
 
     // Close mobile menu when clicking outside
     document.addEventListener('click', (e) => {
-      if (!navbar.contains(e.target) && navMenu.classList.contains('active')) {
-        mobileToggle.classList.remove('active');
-        navMenu.classList.remove('active');
-        document.body.style.overflow = '';
-      }
+        if (!navbar.contains(e.target) && navMenu.classList.contains('active')) {
+            mobileToggle.classList.remove('active');
+            navMenu.classList.remove('active');
+            document.body.style.overflow = '';
+        }
     });
 
     // Enhanced Back to Top Button
     const backToTop = document.getElementById('backToTop');
     
     function updateBackToTopVisibility() {
-      const scrolled = window.scrollY > 400;
-      backToTop.classList.toggle('visible', scrolled);
+        const scrolled = window.scrollY > 400;
+        backToTop.classList.toggle('visible', scrolled);
     }
 
     window.addEventListener('scroll', updateBackToTopVisibility);
     
     backToTop.addEventListener('click', () => {
-      window.scrollTo({
-        top: 0,
-        behavior: 'smooth'
-      });
+        window.scrollTo({
+            top: 0,
+            behavior: 'smooth'
+        });
     });
 
     // Enhanced Theme Toggle
@@ -1929,177 +1918,177 @@
     // Check for saved theme preference
     const savedTheme = localStorage.getItem('theme');
     if (savedTheme) {
-      body.classList.toggle('dark-theme', savedTheme === 'dark');
-      updateThemeIcon(savedTheme === 'dark');
+        body.classList.toggle('dark-theme', savedTheme === 'dark');
+        updateThemeIcon(savedTheme === 'dark');
     }
 
     function updateThemeIcon(isDark) {
-      themeIcon.className = isDark ? 'fas fa-sun' : 'fas fa-moon';
+        themeIcon.className = isDark ? 'fas fa-sun' : 'fas fa-moon';
     }
 
     themeToggle.addEventListener('click', () => {
-      body.classList.toggle('dark-theme');
-      const isDark = body.classList.contains('dark-theme');
-      
-      updateThemeIcon(isDark);
-      localStorage.setItem('theme', isDark ? 'dark' : 'light');
+        body.classList.toggle('dark-theme');
+        const isDark = body.classList.contains('dark-theme');
+        
+        updateThemeIcon(isDark);
+        localStorage.setItem('theme', isDark ? 'dark' : 'light');
     });
 
     // Enhanced Smooth Scrolling for Internal Links
     document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-      anchor.addEventListener('click', function (e) {
-        e.preventDefault();
-        const target = document.querySelector(this.getAttribute('href'));
-        
-        if (target) {
-          const navbarHeight = navbar.offsetHeight;
-          const targetPosition = target.offsetTop - navbarHeight - 20;
-          
-          window.scrollTo({
-            top: targetPosition,
-            behavior: 'smooth'
-          });
-        }
-      });
+        anchor.addEventListener('click', function (e) {
+            e.preventDefault();
+            const target = document.querySelector(this.getAttribute('href'));
+            
+            if (target) {
+                const navbarHeight = navbar.offsetHeight;
+                const targetPosition = target.offsetTop - navbarHeight - 20;
+                
+                window.scrollTo({
+                    top: targetPosition,
+                    behavior: 'smooth'
+                });
+            }
+        });
     });
 
     // Enhanced Form Handling
     const forms = document.querySelectorAll('form');
     forms.forEach(form => {
-      form.addEventListener('submit', function(e) {
-        const submitBtn = this.querySelector('button[type="submit"]');
-        if (submitBtn) {
-          const originalText = submitBtn.innerHTML;
-          submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
-          submitBtn.disabled = true;
-          
-          setTimeout(() => {
-            submitBtn.innerHTML = originalText;
-            submitBtn.disabled = false;
-          }, 3000);
-        }
-      });
+        form.addEventListener('submit', function(e) {
+            const submitBtn = this.querySelector('button[type="submit"]');
+            if (submitBtn) {
+                const originalText = submitBtn.innerHTML;
+                submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
+                submitBtn.disabled = true;
+                
+                setTimeout(() => {
+                    submitBtn.innerHTML = originalText;
+                    submitBtn.disabled = false;
+                }, 3000);
+            }
+        });
     });
 
     // Enhanced Stats Animation
     function animateStats() {
-      const statElements = [
-        { id: 'stat-experience', target: 4 },
-        { id: 'stat-projects', target: 22 },
-        { id: 'stat-certifications', target: 6 }
-      ];
+        const statElements = [
+            { id: 'stat-experience', target: 4 },
+            { id: 'stat-projects', target: 22 },
+            { id: 'stat-certifications', target: 6 }
+        ];
 
-      statElements.forEach(({ id, target }) => {
-        const element = document.getElementById(id);
-        if (element) {
-          animateCounter(element, target);
-        }
-      });
+        statElements.forEach(({ id, target }) => {
+            const element = document.getElementById(id);
+            if (element) {
+                animateCounter(element, target);
+            }
+        });
     }
 
     function animateCounter(element, target) {
-      const duration = 2000;
-      const increment = target / (duration / 50);
-      let current = 0;
-      
-      const timer = setInterval(() => {
-        current += increment;
-        if (current >= target) {
-          current = target;
-          clearInterval(timer);
-        }
-        element.textContent = Math.floor(current);
-      }, 50);
+        const duration = 2000;
+        const increment = target / (duration / 50);
+        let current = 0;
+        
+        const timer = setInterval(() => {
+            current += increment;
+            if (current >= target) {
+                current = target;
+                clearInterval(timer);
+            }
+            element.textContent = Math.floor(current);
+        }, 50);
     }
 
     // Intersection Observer for Stats Animation
     const statsObserver = new IntersectionObserver((entries) => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting) {
-          animateStats();
-          statsObserver.unobserve(entry.target);
-        }
-      });
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                animateStats();
+                statsObserver.unobserve(entry.target);
+            }
+        });
     }, { threshold: 0.5 });
 
     // Observe stats section if it exists
     const statsSection = document.querySelector('.stats-section');
     if (statsSection) {
-      statsObserver.observe(statsSection);
+        statsObserver.observe(statsSection);
     }
 
     // Enhanced Performance Optimizations
     let scrollTimer = null;
     window.addEventListener('scroll', () => {
-      if (scrollTimer !== null) {
-        clearTimeout(scrollTimer);
-      }
-      
-      scrollTimer = setTimeout(() => {
-        updateNavbarOnScroll();
-        updateBackToTopVisibility();
-      }, 10);
+        if (scrollTimer !== null) {
+            clearTimeout(scrollTimer);
+        }
+        
+        scrollTimer = setTimeout(() => {
+            updateNavbarOnScroll();
+            updateBackToTopVisibility();
+        }, 10);
     });
 
     // Lazy Loading for Images
     if ('IntersectionObserver' in window) {
-      const imageObserver = new IntersectionObserver((entries, observer) => {
-        entries.forEach(entry => {
-          if (entry.isIntersecting) {
-            const img = entry.target;
-            if (img.dataset.src) {
-              img.src = img.dataset.src;
-              img.classList.remove('lazy');
-              observer.unobserve(img);
-            }
-          }
+        const imageObserver = new IntersectionObserver((entries, observer) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const img = entry.target;
+                    if (img.dataset.src) {
+                        img.src = img.dataset.src;
+                        img.classList.remove('lazy');
+                        observer.unobserve(img);
+                    }
+                }
+            });
         });
-      });
 
-      document.querySelectorAll('img[data-src]').forEach(img => {
-        imageObserver.observe(img);
-      });
+        document.querySelectorAll('img[data-src]').forEach(img => {
+            imageObserver.observe(img);
+        });
     }
 
     // Enhanced Error Handling
     window.addEventListener('error', (e) => {
-      // Silent error handling
+        // Silent error handling
     });
 
     // Enhanced Accessibility: Focus Management
     const focusableElements = 'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])';
 
     function trapFocus(element) {
-      const focusableContent = element.querySelectorAll(focusableElements);
-      const firstFocusableElement = focusableContent[0];
-      const lastFocusableElement = focusableContent[focusableContent.length - 1];
+        const focusableContent = element.querySelectorAll(focusableElements);
+        const firstFocusableElement = focusableContent[0];
+        const lastFocusableElement = focusableContent[focusableContent.length - 1];
 
-      document.addEventListener('keydown', function(e) {
-        const isTabPressed = e.key === 'Tab' || e.keyCode === 9;
+        document.addEventListener('keydown', function(e) {
+            const isTabPressed = e.key === 'Tab' || e.keyCode === 9;
 
-        if (!isTabPressed) return;
+            if (!isTabPressed) return;
 
-        if (e.shiftKey) {
-          if (document.activeElement === firstFocusableElement) {
-            lastFocusableElement.focus();
-            e.preventDefault();
-          }
-        } else {
-          if (document.activeElement === lastFocusableElement) {
-            firstFocusableElement.focus();
-            e.preventDefault();
-          }
-        }
-      });
+            if (e.shiftKey) {
+                if (document.activeElement === firstFocusableElement) {
+                    lastFocusableElement.focus();
+                    e.preventDefault();
+                }
+            } else {
+                if (document.activeElement === lastFocusableElement) {
+                    firstFocusableElement.focus();
+                    e.preventDefault();
+                }
+            }
+        });
     }
 
     // Apply focus trap to mobile menu when active
     const mobileMenuObserver = new MutationObserver((mutations) => {
-      mutations.forEach((mutation) => {
-        if (mutation.target.classList.contains('active')) {
-          trapFocus(navMenu);
-        }
-      });
+        mutations.forEach((mutation) => {
+            if (mutation.target.classList.contains('active')) {
+                trapFocus(navMenu);
+            }
+        });
     });
 
     mobileMenuObserver.observe(navMenu, { attributes: true, attributeFilter: ['class'] });

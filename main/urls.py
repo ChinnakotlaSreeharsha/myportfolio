@@ -10,4 +10,8 @@ urlpatterns = [
     path('certifications/', views.certifications, name='certifications'),
     path('resume/', views.resume, name='resume'),
     path('contact/', views.contact, name='contact'),
+    
+    # Visitor tracking API endpoints
+    path('api/visitors/', views.track_visitor, name='track_visitor'),
+    path('api/visitor-stats/', views.get_visitor_stats, name='visitor_stats'),
 ]
